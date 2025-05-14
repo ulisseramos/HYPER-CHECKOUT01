@@ -1,3 +1,4 @@
+// Forçar novo deploy na Vercel
 import React, { useState } from 'react';
 import styled, { ThemeProvider, keyframes } from 'styled-components';
 import { Line, Bar } from 'react-chartjs-2';
