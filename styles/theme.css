@@ -1,0 +1,193 @@
+/* Hyper Checkout - Paleta Roxa Premium Escura */
+:root {
+  --bg-main: #0A0A0F;
+  --bg-card: #18181F;
+  --bg-sidebar: #0A0A0F;
+  --border-dark: #23232B;
+  --purple: #7B2CBF;
+  --purple-hover: #9D4EDD;
+  --purple-glow: #C77DFF;
+  --text-main: #F1F1F6;
+  --text-muted: #B3B3C6;
+  --success: #2E7D32;
+  --error: #D32F2F;
+  --shadow: 0 8px 32px #000A;
+  --font-main: 'Poppins', 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  margin: 0;
+  min-height: 100vh;
+  letter-spacing: 0.01em;
+  transition: background 0.3s, color 0.3s;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+  font-family: var(--font-main);
+  font-weight: 900;
+  margin-top: 0;
+  text-shadow: 0 2px 8px #0008;
+}
+
+a {
+  color: var(--purple);
+  text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+a:hover {
+  color: var(--purple-hover);
+  text-shadow: 0 0 8px var(--purple-glow);
+}
+
+button, .btn-purple {
+  background: var(--purple);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-family: var(--font-main);
+  box-shadow: var(--shadow);
+  font-size: 17px;
+  padding: 14px 34px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+button:hover, .btn-purple:hover {
+  background: var(--purple-hover);
+  box-shadow: 0 4px 16px var(--purple-glow);
+  transform: translateY(-2px) scale(1.03);
+}
+button:active, .btn-purple:active {
+  filter: brightness(0.98);
+}
+button:disabled, .btn-purple:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input, select, textarea {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-dark);
+  border-radius: 12px;
+  color: var(--text-main);
+  padding: 16px;
+  font-size: 17px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  font-family: var(--font-main);
+  box-shadow: 0 2px 8px #0004;
+}
+input:focus, select:focus, textarea:focus {
+  border: 2px solid var(--purple-hover);
+  box-shadow: 0 0 8px var(--purple-glow);
+}
+
+.card, .card-premium {
+  background: var(--bg-card);
+  border: 1.5px solid var(--purple);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.card:hover, .card-premium:hover {
+  box-shadow: 0 8px 32px var(--purple-glow), var(--shadow);
+  border: 1.5px solid var(--purple-hover);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 17px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  overflow: hidden;
+  color: var(--text-main);
+  box-shadow: 0 2px 12px #0004;
+}
+.table th, .table td {
+  padding: 18px;
+  text-align: left;
+}
+.table th {
+  background: var(--bg-sidebar);
+  color: var(--purple-glow);
+  font-weight: 800;
+  font-size: 17px;
+  border-bottom: 2px solid var(--purple);
+}
+.table tr:nth-child(even) {
+  background: #15151a;
+}
+.table tr:hover {
+  background: #18181F;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--bg-card);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border-radius: 8px;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 56px;
+  min-width: 400px;
+  border: 2.5px solid var(--purple);
+  color: var(--text-main);
+  backdrop-filter: blur(12px);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--purple)33 50%, var(--bg-card) 75%);
+  border-radius: 8px;
+  min-height: 24px;
+  animation: skeleton 1.2s infinite linear;
+}
+@keyframes skeleton {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.ReactModal__Overlay {
+  z-index: 9999 !important;
+  position: fixed !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #0A0A0FCC !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+/* Sidebar premium escura */
+.sidebar-premium {
+  background: var(--bg-sidebar);
+  color: var(--purple-glow);
+  box-shadow: var(--shadow);
+  border-right: 2px solid var(--purple);
+}
+.header-premium {
+  background: var(--bg-card);
+  color: var(--purple-glow);
+  text-shadow: 0 2px 8px #0008;
+}
+
+/* Light mode para cards */
+.card-premium.light {
+  background: var(--card-bg-light);
+  color: var(--darker-bg);
+  border: var(--border-card-light);
+} 
