@@ -251,6 +251,20 @@ const Main = styled.div`
   margin-left: ${props => props.marginLeft}px;
 `;
 
+const Title = styled.h1`
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: ${props => props.theme.text};
+  margin: 0 0 8px 0;
+`;
+
+const Subtitle = styled.h2`
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: ${props => props.theme.textSecondary};
+  margin: 0;
+`;
+
 const Dashboard = () => {
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
