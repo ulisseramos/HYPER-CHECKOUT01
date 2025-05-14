@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { FiLogOut, FiX, FiUser, FiSettings, FiHelpCircle, FiTrendingUp, FiUsers, FiShoppingBag, FiPercent, FiDollarSign } from 'react-icons/fi';
 import { useSidebar } from '../components/SidebarContext';
+import Sidebar from '../components/Sidebar';
 
 ChartJS.register(
   CategoryScale,
