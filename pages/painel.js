@@ -29,7 +29,7 @@ ChartJS.register(
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0012 0%, #1a0036 100%);
+  background: #18181f;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
@@ -38,17 +38,17 @@ const Container = styled.div`
 `;
 
 const Main = styled.main`
-  margin-left: 370px;
-  padding: 40px 48px 40px 48px;
-  min-height: 100vh;
+  margin-left: ${props => props.marginLeft || 320}px;
+  padding: 0 48px 40px 48px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 0;
   position: relative;
   z-index: 1;
+  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
   @media (max-width: 900px) {
     margin-left: 0;
-    padding: 24px 8px;
+    padding: 0 8px 40px 8px;
   }
 `;
 
@@ -56,45 +56,77 @@ const DashboardContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 0;
 `;
 
 const WelcomeHeader = styled.div`
   width: 100%;
-  padding: 24px;
-  border-radius: 16px;
-  background: rgba(24, 24, 31, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  margin-bottom: 10px;
+  max-width: 100%;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border-radius: 18px;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0;
 `;
+
 const DashboardTitle = styled.div`
-  font-size: 1.5rem;
-  font-weight: 900;
-  margin-bottom: 4px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0;
   background: linear-gradient(90deg, #a084ff 0%, #5a0fd6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 `;
 const WelcomeTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   font-weight: 900;
-  margin: 0 0 2px 0;
-  letter-spacing: -1px;
-  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -1.2px;
+  line-height: 1.08;
   display: inline-block;
   background: linear-gradient(90deg, #fff 0%, #a084ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  @media (max-width: 700px) {
+    font-size: 1.3rem;
+  }
 `;
 const WelcomeHighlight = styled.span`
-  color: #5a0fd6;
+  color: #a084ff;
+  font-weight: 900;
+  text-shadow: 0 2px 12px #7c3aed33;
 `;
 const WelcomeSub = styled.div`
-  color: #b3b3c6;
-  font-size: 1.08rem;
-  font-weight: 400;
+  color: #bcb8d0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.2px;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  @media (max-width: 700px) {
+    font-size: 0.95rem;
+  }
 `;
 
 const CardsGrid = styled.div`
@@ -102,6 +134,7 @@ const CardsGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-bottom: 18px;
+  margin-top: 0;
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -111,20 +144,35 @@ const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(24, 24, 31, 0.72);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px #0004;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  padding: 22px 28px;
-  min-height: 64px;
+  background: rgba(24, 24, 31, 0.88);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 #7c3aed22, 0 1.5px 8px #0006 inset;
+  border: none;
+  padding: 28px 36px;
+  min-height: 72px;
   gap: 18px;
   margin-bottom: 0;
-  transition: box-shadow 0.18s, border 0.18s, transform 0.14s cubic-bezier(0.4,0.2,0.2,1);
+  transition: box-shadow 0.22s, border 0.18s, transform 0.16s cubic-bezier(0.4,0.2,0.2,1);
   will-change: transform, box-shadow, border;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 7px;
+    height: 100%;
+    border-radius: 18px 0 0 18px;
+    background: linear-gradient(180deg, #4b267a 0%, #2a0a4d 100%);
+    box-shadow: 0 0 10px 1px #4b267a55;
+    z-index: 2;
+    opacity: 0.98;
+  }
   &:hover {
-    box-shadow: 0 4px 16px #0006;
-    border: 1px solid rgba(90, 15, 214, 0.3);
+    box-shadow: 0 8px 32px #7c3aed44, 0 2px 12px #4b267a55 inset;
+    border: none;
     transform: scale(1.012) translateY(-2px);
   }
 `;
@@ -429,6 +477,50 @@ const FadeIn = styled.div`
   }
 `;
 
+const MetaCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+  max-width: 260px;
+  background: rgba(24, 24, 31, 0.92);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #7c3aed22, 0 1.5px 8px #0006 inset;
+  padding: 16px 22px 14px 22px;
+  gap: 8px;
+  margin-left: 32px;
+  @media (max-width: 900px) {
+    margin-left: 0;
+    align-self: flex-end;
+    margin-top: 8px;
+  }
+`;
+const MetaLabel = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1.13rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+  gap: 8px;
+  letter-spacing: 0.5px;
+`;
+const MetaProgressBar = styled.div`
+  width: 100%;
+  height: 12px;
+  background: #23232b;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px #0002 inset;
+`;
+const MetaProgress = styled.div`
+  height: 100%;
+  width: ${props => props.percent || 0}%;
+  background: linear-gradient(90deg, #a084ff 0%, #5a0fd6 100%);
+  border-radius: 8px;
+  transition: width 0.4s cubic-bezier(0.4,0.2,0.2,1);
+`;
+
 export default function Painel() {
   const { collapsed, setCollapsed } = useSidebar();
   const sidebarWidth = collapsed ? 84 : 320;
@@ -472,20 +564,100 @@ export default function Painel() {
     ],
   };
 
+  // Exemplo de valores (pode ser dinâmico depois)
+  const metaAtual = 0;
+  const metaTotal = 10000;
+  const metaPercent = Math.round((metaAtual / metaTotal) * 100);
+
   return (
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
-      <Main style={{ marginLeft: sidebarWidth }}>
+      <Main marginLeft={sidebarWidth} style={{ marginTop: 36 }}>
+        <WelcomeHeader>
+          <DashboardTitle>Dashboard</DashboardTitle>
+          <WelcomeTitle>
+            Bem vindo(a) de volta, <WelcomeHighlight>Ulisses!</WelcomeHighlight>
+          </WelcomeTitle>
+          <WelcomeSub>Acompanhe o resumo que fizemos para você.</WelcomeSub>
+        </WelcomeHeader>
+        <div style={{ height: 18 }} />
+        {/* Filtros de Produtos e Período */}
+        <div style={{ display: 'flex', gap: 18, marginBottom: 28, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
+            <label htmlFor="filtro-produto" style={{ color: '#b3b3c6', fontSize: 13, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Produtos</label>
+            <div style={{ position: 'relative' }}>
+              <select id="filtro-produto" style={{
+                width: '100%',
+                background: 'linear-gradient(90deg, #18181F 60%, #23232B 100%)',
+                color: '#ede6fa',
+                border: '1.7px solid #2d1a4d',
+                borderRadius: 14,
+                padding: '16px 44px 16px 18px',
+                fontSize: 16,
+                outline: 'none',
+                marginBottom: 0,
+                boxShadow: '0 2px 12px #7c3aed18',
+                fontWeight: 600,
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'none',
+                transition: 'border 0.18s, box-shadow 0.18s',
+              }}
+                onFocus={e => e.target.style.border = '1.7px solid #7c3aed'}
+                onBlur={e => e.target.style.border = '1.7px solid #2d1a4d'}
+              >
+                <option>Produtos</option>
+                <option>Produto 1</option>
+                <option>Produto 2</option>
+              </select>
+              {/* Ícone seta custom */}
+              <span style={{ position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9L11 14L16 9" stroke="#a084ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
+            <label htmlFor="filtro-periodo" style={{ color: '#b3b3c6', fontSize: 13, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Período</label>
+            <div style={{ position: 'relative' }}>
+              <select id="filtro-periodo" style={{
+                width: '100%',
+                background: 'linear-gradient(90deg, #18181F 60%, #23232B 100%)',
+                color: '#ede6fa',
+                border: '1.7px solid #2d1a4d',
+                borderRadius: 14,
+                padding: '16px 44px 16px 18px',
+                fontSize: 16,
+                outline: 'none',
+                marginBottom: 0,
+                boxShadow: '0 2px 12px #7c3aed18',
+                fontWeight: 600,
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'none',
+                transition: 'border 0.18s, box-shadow 0.18s',
+              }}
+                onFocus={e => e.target.style.border = '1.7px solid #7c3aed'}
+                onBlur={e => e.target.style.border = '1.7px solid #2d1a4d'}
+              >
+                <option>Últimos 7 dias</option>
+                <option>Hoje</option>
+                <option>Ontem</option>
+                <option>Últimos 30 dias</option>
+                <option>Este mês</option>
+                <option>Mês passado</option>
+              </select>
+              {/* Ícone seta custom */}
+              <span style={{ position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9L11 14L16 9" stroke="#a084ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
         <DashboardContent>
-          <FadeIn>
-            <WelcomeHeader>
-              <DashboardTitle>Dashboard</DashboardTitle>
-              <WelcomeTitle>
-                Bem vindo(a) de volta, <WelcomeHighlight>Ulisses!</WelcomeHighlight>
-              </WelcomeTitle>
-              <WelcomeSub>Acompanhe o resumo que fizemos para você.</WelcomeSub>
-            </WelcomeHeader>
-          </FadeIn>
           <FadeIn>
             <CardsGrid>
               {cardsData.map((card, i) => (
@@ -504,6 +676,7 @@ export default function Painel() {
               ))}
             </CardsGrid>
           </FadeIn>
+          <div style={{ height: 24 }} />
           <DashboardGrid>
             <FadeIn style={{ height: '100%' }}>
               <ChartCard style={{ height: '100%' }}>

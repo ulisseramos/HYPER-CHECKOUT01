@@ -93,32 +93,19 @@ const Card = styled.div`
   border: 1px solid ${props => props.theme.border};
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   padding: 24px;
-  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-
   &::before {
     content: '';
     position: absolute;
-    top: 0;
     left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, ${props => props.theme.primary}, ${props => props.theme.secondary});
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
-    border-color: ${props => props.theme.primary};
-
-    &::before {
-      opacity: 1;
-    }
+    top: 0;
+    width: 6px;
+    height: 100%;
+    border-radius: 16px 0 0 16px;
+    background: linear-gradient(180deg, #a084ff 0%, #5a0fd6 100%);
+    z-index: 2;
   }
 `;
 

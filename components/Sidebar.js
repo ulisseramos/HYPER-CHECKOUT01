@@ -20,7 +20,8 @@ const menu = [
 
 const SidebarContainer = styled.aside`
   width: ${({ collapsed }) => (collapsed ? '84px' : '320px')};
-  background: ${({ theme }) => theme.colors.background};
+  background: linear-gradient(120deg, #18181f 70%, #23232b 100%);
+  box-shadow: 0 4px 24px 0 #0004, 0 1.5px 8px #0008 inset;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -32,13 +33,12 @@ const SidebarContainer = styled.aside`
   font-family: ${({ theme }) => theme.fonts.body};
   transition: width 0.35s cubic-bezier(.77,0,.18,1);
   overflow: hidden;
-  box-shadow: 0 0 16px 0 ${({ theme }) => theme.colors.primary}33;
 `;
 const CollapseButton = styled.button`
-  background: transparent;
-  border: 1.5px solid ${({ theme }) => theme.colors.primary}55;
+  background: #18181f !important;
+  border: 2px solid #a084ff !important;
   border-radius: 50%;
-  color: ${({ theme }) => theme.colors.primary};
+  color: #a084ff !important;
   width: 44px;
   height: 44px;
   display: flex;
@@ -50,8 +50,8 @@ const CollapseButton = styled.button`
   box-shadow: none;
   overflow: visible;
   &:hover {
-    background: ${({ theme }) => theme.colors.primary}11;
-    border: 1.5px solid ${({ theme }) => theme.colors.primary};
+    background: #23232b !important;
+    border: 2px solid #7c3aed !important;
   }
 `;
 const LogoWrapper = styled.a`
@@ -113,6 +113,7 @@ const MenuNav = styled.nav`
 const MenuButton = styled.button`
   display: flex;
   align-items: center;
+  justify-content: ${({ collapsed }) => (collapsed ? 'center' : 'flex-start')};
   gap: 12px;
   font-size: 20px;
   font-family: ${({ theme }) => theme.fonts.body};
@@ -121,17 +122,18 @@ const MenuButton = styled.button`
   background: ${({ active }) => (active ? 'rgba(90,15,214,0.13)' : 'transparent')};
   border: ${({ active, theme }) => (active ? `2.5px solid ${theme.colors.primary}` : '2.5px solid transparent')};
   border-radius: 16px;
-  min-width: ${({ collapsed }) => (collapsed ? '60px' : '210px')};
+  min-width: ${({ collapsed }) => (collapsed ? '56px' : '210px')};
+  width: ${({ collapsed }) => (collapsed ? '56px' : 'auto')};
   height: 56px;
-  padding: 0 24px 0 28px;
+  padding: ${({ collapsed }) => (collapsed ? '0' : '0 24px 0 28px')};
   margin: 0 10px;
   cursor: pointer;
   box-shadow: ${({ active }) => (active ? '0 2px 16px 0 rgba(160,132,255,0.18) inset' : 'none')};
-  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s, width 0.22s, min-width 0.22s, padding 0.22s;
   outline: none;
-  justify-content: ${({ collapsed }) => (collapsed ? 'center' : 'flex-start')};
   position: relative;
   filter: none;
+  overflow: visible;
   &:hover {
     background: rgba(90,15,214,0.18);
     color: ${({ theme }) => theme.colors.primary};
@@ -148,7 +150,7 @@ const MenuIcon = styled.span`
 `;
 const Tooltip = styled.div`
   position: absolute;
-  left: 60px;
+  left: 70px;
   top: 50%;
   transform: translateY(-50%);
   background: ${({ theme }) => theme.colors.card};
@@ -274,10 +276,10 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
         {/* Botão de retração */}
         <div style={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end', alignItems: 'center', padding: '18px 18px 0 18px' }}>
           <CollapseButton onClick={handleCollapse} aria-label={collapsed ? 'Expandir menu' : 'Retrair menu'}>
-            {collapsed
-              ? <FiChevronRight size={24} color="#5a0fd6" />
-              : <FiChevronLeft size={24} color="#5a0fd6" />
-            }
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+              style={{ display: 'block', margin: 'auto', transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.22s cubic-bezier(.77,0,.18,1)' }}>
+              <path d="M20 10L14 16L20 22" stroke="#a084ff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </svg>
           </CollapseButton>
         </div>
         {/* Logo */}
@@ -302,7 +304,9 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
                     {!collapsed && item.label}
                   </MenuButton>
                   {collapsed && showTooltip === item.label && (
-                    <Tooltip>{item.label}</Tooltip>
+                    <Tooltip style={{ left: 70, top: '50%', transform: 'translateY(-50%)', background: '#23232b', color: '#ede6fa', fontWeight: 700, fontSize: 16, borderRadius: 12, boxShadow: '0 4px 24px #a084ff33', border: '2px solid #a084ff', padding: '10px 22px', zIndex: 9999, whiteSpace: 'nowrap' }}>
+                      {item.label}
+                    </Tooltip>
                   )}
                 </div>
               </React.Fragment>

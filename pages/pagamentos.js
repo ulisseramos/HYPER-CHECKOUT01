@@ -12,40 +12,27 @@ const glowAnimation = keyframes`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0012 0%, #0A0A0F 100%);
+  background: #18181f;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at center, rgba(90, 15, 214, 0.1) 0%, transparent 70%);
-    animation: rotate 30s linear infinite;
-    z-index: 0;
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
 `;
 
 const Main = styled.main`
-  margin-left: ${props => props.marginLeft}px;
-  padding: 40px 48px 40px 48px;
-  min-height: 100vh;
+  margin-left: ${props => props.marginLeft || 320}px;
+  padding: 0 48px 40px 48px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 0;
   position: relative;
   z-index: 1;
+  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+  @media (max-width: 900px) {
+    margin-left: 0;
+    padding: 0 8px 40px 8px;
+  }
 `;
 
 const Header = styled.div`
@@ -53,12 +40,11 @@ const Header = styled.div`
   align-items: center;
   gap: 18px;
   margin-bottom: 8px;
-  background: rgba(24, 24, 31, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  border: none;
 `;
 
 const HeaderIcon = styled.div`
@@ -93,13 +79,15 @@ const SubTitle = styled.div`
 const CardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 18px;
+  margin-bottom: 18px;
+  margin-top: 0;
   @media (max-width: 1200px) {
     grid-template-columns: repeat(2, 1fr);
   }
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 `;
 
@@ -107,39 +95,36 @@ const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(24, 24, 31, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  box-shadow: 0 4px 12px rgba(90, 15, 214, 0.1);
-  padding: 24px;
-  min-height: 120px;
+  background: rgba(24, 24, 31, 0.88);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 #7c3aed22, 0 1.5px 8px #0006 inset;
+  border: none;
+  padding: 28px 36px;
+  min-height: 72px;
   gap: 18px;
-  transition: all 0.3s ease;
+  margin-bottom: 0;
+  transition: box-shadow 0.22s, border 0.18s, transform 0.16s cubic-bezier(0.4,0.2,0.2,1);
+  will-change: transform, box-shadow, border;
+  backdrop-filter: blur(16px);
   position: relative;
   overflow: hidden;
-
   &::before {
     content: '';
     position: absolute;
-    top: 0;
     left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #5a0fd6, #7c3aed);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 0;
+    width: 7px;
+    height: 100%;
+    border-radius: 18px 0 0 18px;
+    background: linear-gradient(180deg, #4b267a 0%, #2a0a4d 100%);
+    box-shadow: 0 0 10px 1px #4b267a55;
+    z-index: 2;
+    opacity: 0.98;
   }
-
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(90, 15, 214, 0.2);
-    border-color: rgba(90, 15, 214, 0.5);
-
-    &::before {
-      opacity: 1;
-    }
+    box-shadow: 0 8px 32px #7c3aed44, 0 2px 12px #4b267a55 inset;
+    border: none;
+    transform: scale(1.012) translateY(-2px);
   }
 `;
 
@@ -491,12 +476,15 @@ export default function Pagamentos() {
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
       <Main marginLeft={sidebarWidth}>
+        <div style={{ marginTop: 32 }} />
         <Header>
           <HeaderIcon>
             <FiDollarSign />
           </HeaderIcon>
-          <Title>Pagamentos</Title>
-          <SubTitle>Gerencie e acompanhe todos os pagamentos</SubTitle>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <Title>Pagamentos</Title>
+            <SubTitle>Gerencie e acompanhe todos os pagamentos</SubTitle>
+          </div>
         </Header>
 
         <CardsGrid>

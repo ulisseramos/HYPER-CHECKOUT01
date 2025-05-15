@@ -14,92 +14,80 @@ const glowAnimation = keyframes`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0012 0%, #0A0A0F 100%);
+  background: #18181f;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
   position: relative;
   overflow: hidden;
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at center, rgba(90, 15, 214, 0.1) 0%, transparent 70%);
-    animation: rotate 30s linear infinite;
-    z-index: 0;
-  }
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
 `;
 
 const Main = styled.main`
-  margin-left: 370px;
-  padding: 40px 48px 40px 48px;
-  min-height: 100vh;
+  margin-left: ${props => props.marginLeft || 320}px;
+  padding: 0 48px 40px 48px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 0;
   position: relative;
   z-index: 1;
+  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
   @media (max-width: 900px) {
     margin-left: 0;
-    padding: 24px 8px;
+    padding: 0 8px 40px 8px;
   }
 `;
 
 const Header = styled.div`
   display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 8px;
-  background: rgba(24, 24, 31, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
+  align-items: flex-end;
+  gap: 22px;
+  margin-bottom: 18px;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  border: none;
 `;
 
 const HeaderIcon = styled.div`
-  background: linear-gradient(135deg, #5a0fd6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #5a0fd6 100%);
   color: #fff;
-  border-radius: 12px;
-  width: 48px;
-  height: 48px;
+  border-radius: 16px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
-  box-shadow: 0 4px 12px rgba(90, 15, 214, 0.3);
+  font-size: 2.1rem;
+  box-shadow: 0 4px 18px #7c3aed33, 0 1.5px 8px #0006 inset;
 `;
 
 const Title = styled.h1`
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 900;
-  color: #fff;
   margin: 0;
-  background: linear-gradient(90deg, #fff 0%, #b3b3c6 100%);
+  background: linear-gradient(90deg, #a084ff 0%, #5a0fd6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  letter-spacing: -1.2px;
 `;
 
 const SubTitle = styled.div`
   color: #b3b3c6;
-  font-size: 1.08rem;
-  font-weight: 400;
+  font-size: 1.13rem;
+  font-weight: 500;
+  margin-top: 2px;
 `;
 
 const Tabs = styled.div`
   display: flex;
-  background: transparent;
+  background: #23232b;
   border-radius: 16px 16px 0 0;
   overflow: hidden;
-  border-bottom: 1.5px solid var(--color-border, #2d1a4d);
+  border-bottom: 2px solid #2d1a4d;
+  box-shadow: 0 2px 8px #7c3aed11;
 `;
 
 const TabButton = styled.button`
@@ -107,27 +95,32 @@ const TabButton = styled.button`
   padding: 18px;
   background: none;
   border: none;
-  border-bottom: ${({ active }) => active ? '3px solid #5a0fd6' : 'none'};
-  font-weight: 600;
-  color: ${({ active }) => active ? '#5a0fd6' : '#b3b3c6'};
-  font-size: 1.1rem;
+  border-bottom: ${({ active }) => active ? '3px solid #a084ff' : 'none'};
+  font-weight: 700;
+  color: ${({ active }) => active ? '#a084ff' : '#b3b3c6'};
+  font-size: 1.13rem;
   cursor: pointer;
-  transition: color 0.2s, border-bottom 0.2s;
+  transition: color 0.2s, border-bottom 0.2s, background 0.18s;
   border-radius: 0;
+  letter-spacing: 0.2px;
+  &:hover {
+    background: #18181f;
+    color: #a084ff;
+  }
 `;
 
 const Card = styled.div`
-  background: rgba(24, 24, 31, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 18px;
-  box-shadow: 0 4px 24px #5a0fd61a;
-  border: 1px solid rgba(90, 15, 214, 0.18);
+  background: rgba(24, 24, 31, 0.93);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px 0 #7c3aed18, 0 1.5px 8px #0006 inset;
+  border: 1.5px solid #2d1a4d;
   margin-bottom: 40px;
   padding: 0;
+  backdrop-filter: blur(18px);
 `;
 
 const CardSection = styled.div`
-  padding: 32px;
+  padding: 32px 32px 18px 32px;
 `;
 
 const FiltersBar = styled.div`
@@ -135,21 +128,25 @@ const FiltersBar = styled.div`
   align-items: center;
   gap: 18px;
   margin-bottom: 28px;
+  background: #18181f;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 2px 8px #7c3aed11;
 `;
 
 const SearchInput = styled.input`
   flex: 1;
-  background: rgba(34,25,77,0.18);
+  background: #23232b;
   border: 1.5px solid #2d1a4d;
   color: #fff;
-  border-radius: 10px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 14px 18px;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
   &:focus {
-    border: 1.5px solid #5a0fd6;
-    box-shadow: 0 0 0 2px #5a0fd633;
+    border: 1.5px solid #a084ff;
+    box-shadow: 0 0 0 2px #a084ff33;
   }
 `;
 
@@ -178,12 +175,13 @@ const TableCard = styled(Card)`
 `;
 
 const TableTitle = styled.div`
-  font-weight: 600;
-  font-size: 1.35rem;
-  margin-bottom: 18px;
-  color: #fff;
-  letter-spacing: 0.1px;
-  padding: 32px 32px 0 32px;
+  color: #ede6fa;
+  font-size: 1.25rem;
+  font-weight: 900;
+  padding: 24px 24px 0 24px;
+  background: linear-gradient(90deg, #fff 0%, #b3b3c6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const StyledTable = styled.table`
@@ -461,7 +459,8 @@ export default function Produtos() {
   return (
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
-      <Main style={{ marginLeft: sidebarWidth }}>
+      <Main marginLeft={sidebarWidth}>
+        <div style={{ marginTop: 32 }} />
         <Header>
           <HeaderIcon>
             <FiBox />
