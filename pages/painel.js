@@ -13,8 +13,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { FiDollarSign, FiCalendar, FiCreditCard, FiGrid, FiFileText, FiActivity, FiZap } from 'react-icons/fi';
+import { FiDollarSign, FiCalendar, FiCreditCard, FiGrid, FiFileText, FiActivity, FiZap, FiBell, FiX } from 'react-icons/fi';
 import { useSidebar } from '../components/SidebarContext';
+import { keyframes } from 'styled-components';
 
 ChartJS.register(
   CategoryScale,
@@ -29,8 +30,8 @@ ChartJS.register(
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #18181f;
-  color: #fff;
+  background: #0b0b0e;
+  color: #F1F1F6;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
   position: relative;
@@ -142,50 +143,44 @@ const CardsGrid = styled.div`
 `;
 const Card = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(24, 24, 31, 0.88);
-  border-radius: 18px;
-  box-shadow: 0 4px 24px 0 #7c3aed22, 0 1.5px 8px #0006 inset;
-  border: none;
-  padding: 28px 36px;
-  min-height: 72px;
-  gap: 18px;
-  margin-bottom: 0;
-  transition: box-shadow 0.22s, border 0.18s, transform 0.16s cubic-bezier(0.4,0.2,0.2,1);
-  will-change: transform, box-shadow, border;
-  backdrop-filter: blur(16px);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: #101014;
+  border-radius: 16px;
+  border: 1.2px solid #23232b;
+  box-shadow: none;
+  padding: 28px 36px 24px 36px;
+  min-height: 110px;
   position: relative;
   overflow: hidden;
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 7px;
-    height: 100%;
-    border-radius: 18px 0 0 18px;
-    background: linear-gradient(180deg, #4b267a 0%, #2a0a4d 100%);
-    box-shadow: 0 0 10px 1px #4b267a55;
-    z-index: 2;
-    opacity: 0.98;
-  }
-  &:hover {
-    box-shadow: 0 8px 32px #7c3aed44, 0 2px 12px #4b267a55 inset;
-    border: none;
-    transform: scale(1.012) translateY(-2px);
-  }
+`;
+const CardIconGlass = styled.div`
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #18181f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.2px solid #23232b;
+  position: absolute;
+  top: 18px;
+  left: 24px;
 `;
 const CardInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 0;
+  padding-left: 64px;
+  padding-top: 2px;
 `;
 const CardTitle = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.98rem;
   font-weight: 600;
-  margin-bottom: 2px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -223,20 +218,19 @@ const CardDetailsLink = styled.a`
 `;
 
 const ChartCard = styled.div`
-  background: ${({ theme }) => theme.colors.cardSolid};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  box-shadow: 0 2px 8px #0004;
-  padding: 28px 22px 18px 22px;
+  background: #101014;
+  border-radius: 16px;
+  border: 1.2px solid #23232b;
+  box-shadow: none;
+  padding: 32px 28px 22px 28px;
   min-height: 0;
   display: flex;
   flex-direction: column;
   margin-top: 0;
-  transition: box-shadow 0.18s, border 0.18s, transform 0.14s cubic-bezier(0.4,0.2,0.2,1);
-  will-change: transform, box-shadow, border;
+  transition: border 0.18s, transform 0.14s cubic-bezier(0.4,0.2,0.2,1);
+  will-change: transform, border;
   &:hover {
-    box-shadow: 0 4px 16px #0006;
-    border: 1px solid rgba(90, 15, 214, 0.3);
+    border: 1.5px solid #23232b;
     transform: scale(1.01) translateY(-2px);
   }
 `;
@@ -268,10 +262,10 @@ const DashboardGrid = styled.div`
 `;
 
 const PaymentMethodsCard = styled.div`
-  background: ${({ theme }) => theme.colors.cardSolid};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  box-shadow: 0 2px 8px #0004;
+  background: #101014;
+  border-radius: 16px;
+  border: 1.2px solid #23232b;
+  box-shadow: none;
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
@@ -279,11 +273,6 @@ const PaymentMethodsCard = styled.div`
   height: 100%;
   transition: none;
   will-change: unset;
-  &:hover {
-    box-shadow: 0 2px 8px #0004;
-    border: 1px solid rgba(90, 15, 214, 0.3);
-    transform: none;
-  }
 `;
 const PaymentTitle = styled.div`
   background: linear-gradient(90deg, #5a0fd6 0%, #00e6ff 100%);
@@ -307,10 +296,10 @@ const PaymentList = styled.div`
 const PaymentItem = styled.div`
   display: flex;
   align-items: center;
-  background: #14141A;
+  background: #101014;
   border-radius: 12px;
   padding: 20px 22px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
+  border: 1.2px solid #23232b;
   justify-content: space-between;
   margin-bottom: 8px;
 `;
@@ -318,19 +307,12 @@ const PaymentIconCircle = styled.div`
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #18181F 60%, #23232B 100%);
+  background: #16161a;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px #0006;
-  border: 1.5px solid #23232B;
+  border: 1.2px solid #23232b;
   margin-right: 18px;
-  transition: box-shadow 0.18s, transform 0.18s;
-  &:hover {
-    box-shadow: 0 4px 18px #5a0fd633;
-    transform: scale(1.07);
-    border-color: #5a0fd6;
-  }
 `;
 const PaymentInfo = styled.div`
   flex: 1;
@@ -455,20 +437,6 @@ const cardsData = [
   },
 ];
 
-const CardIconGlass = styled.div`
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(90, 15, 214, 0.08);
-  box-shadow: 0 1px 4px #0002;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  backdrop-filter: blur(6px);
-`;
-
 const FadeIn = styled.div`
   animation: fadeInUp 0.8s cubic-bezier(0.4,0.2,0.2,1);
   @keyframes fadeInUp {
@@ -483,9 +451,10 @@ const MetaCard = styled.div`
   align-items: center;
   min-width: 180px;
   max-width: 260px;
-  background: rgba(24, 24, 31, 0.92);
+  background: #101014;
   border-radius: 14px;
-  box-shadow: 0 2px 12px #7c3aed22, 0 1.5px 8px #0006 inset;
+  box-shadow: none;
+  border: 1.2px solid #23232b;
   padding: 16px 22px 14px 22px;
   gap: 8px;
   margin-left: 32px;
@@ -521,10 +490,163 @@ const MetaProgress = styled.div`
   transition: width 0.4s cubic-bezier(0.4,0.2,0.2,1);
 `;
 
+const NotificationBell = styled.div`
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 2000;
+  cursor: pointer;
+  background: #101014;
+  border: 1.5px solid #2d1a4d;
+  border-radius: 16px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border 0.18s, background 0.18s;
+  &:hover {
+    border: 1.5px solid #a084ff;
+    background: #18181f;
+  }
+`;
+const BellIcon = styled.div`
+  position: relative;
+  font-size: 1.85rem;
+  color: #a084ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const BellBadge = styled.span`
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ff4d6d;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 500;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  pointer-events: none;
+  animation: ${pulseAnim} 1.2s infinite;
+`;
+const pulseAnim = keyframes`
+  0% { box-shadow: 0 0 0 0 #ff4d6d55; }
+  70% { box-shadow: 0 0 0 6px #ff4d6d00; }
+  100% { box-shadow: 0 0 0 0 #ff4d6d00; }
+`;
+const NotifDropdown = styled.div`
+  position: fixed;
+  top: 70px;
+  right: 24px;
+  width: 340px;
+  max-height: 420px;
+  background: #18181f;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0006;
+  border: 1.5px solid #23232b;
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeInNotif 0.18s;
+  transition: box-shadow 0.18s, border 0.18s;
+  @keyframes fadeInNotif {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: none; }
+  }
+`;
+const NotifHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 8px 20px;
+  background: #18181f;
+  border-bottom: 1px solid #23232b;
+`;
+const NotifTitle = styled.div`
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+`;
+const NotifClose = styled.button`
+  background: none;
+  border: none;
+  color: #b3b3c6;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.18s;
+  &:hover { color: #ff4d6d; }
+`;
+const NotifList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0 10px 0;
+  background: #18181f;
+`;
+const NotifItem = styled.div`
+  padding: 13px 20px;
+  border-bottom: 1px solid #23232b;
+  color: #ede6fa;
+  font-size: 0.98rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: ${({ unread }) => unread ? '#202027' : 'none'};
+`;
+const NotifMsg = styled.div`
+  font-weight: 500;
+  color: #fff;
+`;
+const NotifMeta = styled.div`
+  font-size: 0.89rem;
+  color: #b3b3c6;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 export default function Painel() {
   const { collapsed, setCollapsed } = useSidebar();
   const sidebarWidth = collapsed ? 84 : 320;
   const chartRef = useRef();
+  const [showNotif, setShowNotif] = React.useState(false);
+  const [notifs, setNotifs] = React.useState([
+    { id: 1, msg: 'Novo pagamento via PIX recebido!', type: 'PIX', date: new Date(), unread: true },
+    { id: 2, msg: 'Pagamento aprovado!', type: 'Pagamento', date: new Date(Date.now() - 3600 * 1000), unread: true },
+    { id: 3, msg: 'Checkout criado com sucesso.', type: 'Checkout', date: new Date(Date.now() - 2 * 3600 * 1000), unread: false },
+  ]);
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      if (showNotif) setShowNotif(false);
+    }
+    if (showNotif) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotif]);
+  const unreadCount = notifs.filter(n => n.unread).length;
+  function handleBellClick(e) {
+    e.stopPropagation();
+    setShowNotif(s => !s);
+  }
+  function handleNotifClose(e) {
+    e.stopPropagation();
+    setShowNotif(false);
+  }
+  function markAllRead() {
+    setNotifs(n => n.map(nf => ({ ...nf, unread: false })));
+  }
 
   // Função para criar gradiente roxo no gráfico de linha (área preenchida, mais bonito)
   const getGradient = (ctx, chartArea) => {
@@ -543,21 +665,21 @@ export default function Painel() {
         label: 'Vendas',
         data: [3400, 3200, 3100, 3600, 3150, 3250, 3850],
         borderColor: '#7c3aed',
-        pointBackgroundColor: '#a084ff',
-        pointBorderColor: '#fff',
-        tension: 0.5,
-        fill: 'origin',
-        borderWidth: 3,
-        pointRadius: 5,
-        pointHoverRadius: 8,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: '#7c3aed',
+        pointRadius: 7,
+        pointHoverRadius: 10,
+        borderWidth: 4,
+        tension: 0.45,
+        fill: true,
         backgroundColor: function(context) {
           const chart = context.chart;
           const {ctx, chartArea} = chart;
           if (!chartArea) return null;
           const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          gradient.addColorStop(0, 'rgba(124, 58, 237, 0.7)');   // Roxo forte no topo
-          gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.25)');
-          gradient.addColorStop(1, 'rgba(124, 58, 237, 0.03)');  // Quase transparente na base
+          gradient.addColorStop(0, 'rgba(124, 58, 237, 0.7)'); // Roxo sólido no topo
+          gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.35)'); // Roxo médio no meio
+          gradient.addColorStop(1, 'rgba(124, 58, 237, 0.18)'); // Roxo translúcido na base
           return gradient;
         },
       },
@@ -572,6 +694,38 @@ export default function Painel() {
   return (
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
+      <NotificationBell onClick={handleBellClick} title="Notificações">
+        <BellIcon>
+          <FiBell />
+          {unreadCount > 0 && <BellBadge>{unreadCount}</BellBadge>}
+        </BellIcon>
+      </NotificationBell>
+      {showNotif && (
+        <NotifDropdown onClick={e => e.stopPropagation()}>
+          <NotifHeader>
+            <NotifTitle>Notificações</NotifTitle>
+            <NotifClose onClick={handleNotifClose}><FiX /></NotifClose>
+          </NotifHeader>
+          <NotifList>
+            {notifs.length === 0 && (
+              <NotifItem unread>
+                <NotifMsg>Nenhuma notificação.</NotifMsg>
+              </NotifItem>
+            )}
+            {notifs.map(n => (
+              <NotifItem key={n.id} unread={n.unread}>
+                <NotifMsg>{n.msg}</NotifMsg>
+                <NotifMeta>
+                  <span>{n.type}</span>
+                  <span>•</span>
+                  <span>{n.date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</span>
+                </NotifMeta>
+              </NotifItem>
+            ))}
+          </NotifList>
+          <button style={{ background: '#23232b', color: '#ede6fa', fontWeight: 600, fontSize: 14, padding: 11, cursor: 'pointer', width: '100%', border: 'none', borderTop: '1px solid #23232b', borderRadius: '0 0 16px 16px', transition: 'background 0.18s, color 0.18s', letterSpacing: 0.1 }} onClick={markAllRead}>Marcar todas como lidas</button>
+        </NotifDropdown>
+      )}
       <Main marginLeft={sidebarWidth} style={{ marginTop: 36 }}>
         <WelcomeHeader>
           <DashboardTitle>Dashboard</DashboardTitle>
@@ -665,7 +819,7 @@ export default function Painel() {
                   <CardInfo>
                     <CardTitle>
                       <CardIconGlass>
-                        {card.icon && React.cloneElement(card.icon, { size: 22, color: '#a084ff' })}
+                        {card.icon && React.cloneElement(card.icon, { size: 26, color: '#b3b3c6' })}
                       </CardIconGlass>
                       {card.title}
                     </CardTitle>

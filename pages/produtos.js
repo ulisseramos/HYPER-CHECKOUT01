@@ -3,8 +3,9 @@ import Sidebar from '../components/Sidebar';
 import styled, { keyframes } from 'styled-components';
 import { supabase } from '../lib/supabaseClient';
 import { listPushinPayProducts } from '../lib/pushinpay';
-import { FiCheckCircle, FiEdit2, FiTrash2, FiCopy, FiBox, FiPlus, FiUsers } from 'react-icons/fi';
+import { FiCheckCircle, FiEdit2, FiTrash2, FiCopy, FiBox, FiPlus, FiUsers, FiBell, FiX } from 'react-icons/fi';
 import { useSidebar } from '../components/SidebarContext';
+import { useNotification } from '../components/NotificationContext';
 
 const glowAnimation = keyframes`
   0% { box-shadow: 0 0 5px rgba(90, 15, 214, 0.5); }
@@ -14,7 +15,7 @@ const glowAnimation = keyframes`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #18181f;
+  background: #0b0b0e;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
@@ -24,7 +25,7 @@ const Container = styled.div`
 
 const Main = styled.main`
   margin-left: ${props => props.marginLeft || 320}px;
-  padding: 0 48px 40px 48px;
+  padding: 48px 48px 40px 48px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -33,7 +34,7 @@ const Main = styled.main`
   transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
   @media (max-width: 900px) {
     margin-left: 0;
-    padding: 0 8px 40px 8px;
+    padding: 48px 8px 40px 8px;
   }
 `;
 
@@ -83,7 +84,7 @@ const SubTitle = styled.div`
 
 const Tabs = styled.div`
   display: flex;
-  background: #23232b;
+  background: #101014;
   border-radius: 16px 16px 0 0;
   overflow: hidden;
   border-bottom: 2px solid #2d1a4d;
@@ -110,7 +111,7 @@ const TabButton = styled.button`
 `;
 
 const Card = styled.div`
-  background: rgba(24, 24, 31, 0.93);
+  background: #101014;
   border-radius: 20px;
   box-shadow: 0 4px 24px 0 #7c3aed18, 0 1.5px 8px #0006 inset;
   border: 1.5px solid #2d1a4d;
@@ -128,7 +129,7 @@ const FiltersBar = styled.div`
   align-items: center;
   gap: 18px;
   margin-bottom: 28px;
-  background: #18181f;
+  background: #101014;
   border-radius: 14px;
   padding: 14px 18px;
   box-shadow: 0 2px 8px #7c3aed11;
@@ -136,7 +137,7 @@ const FiltersBar = styled.div`
 
 const SearchInput = styled.input`
   flex: 1;
-  background: #23232b;
+  background: #18181f;
   border: 1.5px solid #2d1a4d;
   color: #fff;
   border-radius: 12px;
@@ -240,7 +241,7 @@ const ModalOverlay = styled.div`
 
 const ModalForm = styled.form`
   min-width: 400px;
-  background: rgba(24, 24, 31, 0.98);
+  background: #101014;
   border-radius: 24px;
   box-shadow: 0 8px 32px #5a0fd633;
   border: 2.5px solid #2d1a4d;
@@ -309,6 +310,126 @@ const ModalActions = styled.div`
   gap: 20px;
 `;
 
+const NotificationBell = styled.div`
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 2000;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const BellIcon = styled.div`
+  position: relative;
+  font-size: 2.1rem;
+  color: #a084ff;
+  transition: color 0.18s;
+  &:hover {
+    color: #fff;
+  }
+`;
+
+const BellBadge = styled.span`
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d6d;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 50%;
+  padding: 2px 7px;
+  min-width: 22px;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #101014;
+`;
+
+const NotifDropdown = styled.div`
+  position: fixed;
+  top: 70px;
+  right: 48px;
+  width: 340px;
+  max-height: 420px;
+  background: #101014;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #0008;
+  border: 1.5px solid #2d1a4d;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeInNotif 0.18s;
+  @keyframes fadeInNotif {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: none; }
+  }
+`;
+
+const NotifHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 10px 22px;
+  background: #18181f;
+  border-bottom: 1.5px solid #23232b;
+`;
+
+const NotifTitle = styled.div`
+  color: #a084ff;
+  font-size: 1.18rem;
+  font-weight: 800;
+`;
+
+const NotifClose = styled.button`
+  background: none;
+  border: none;
+  color: #b3b3c6;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.18s;
+  &:hover { color: #ff4d6d; }
+`;
+
+const NotifList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0 10px 0;
+  background: #101014;
+`;
+
+const NotifItem = styled.div`
+  padding: 14px 22px;
+  border-bottom: 1px solid #23232b;
+  color: #ede6fa;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: ${({ unread }) => unread ? '#18181f' : 'none'};
+`;
+
+const NotifMsg = styled.div`
+  font-weight: 600;
+  color: #ede6fa;
+`;
+
+const NotifMeta = styled.div`
+  font-size: 0.93rem;
+  color: #b3b3c6;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 function IconCheck() {
   return <FiCheckCircle style={{ color: 'var(--color-purple)', fontSize: 22, verticalAlign: 'middle', filter: 'drop-shadow(0 1px 1px var(--color-purple)33)', transition: 'transform 0.2s' }} />;
 }
@@ -337,6 +458,8 @@ export default function Produtos() {
   const [search, setSearch] = useState('');
   const { collapsed, setCollapsed } = useSidebar();
   const sidebarWidth = collapsed ? 84 : 320;
+  const [showNotif, setShowNotif] = useState(false);
+  const { notifs, markAllRead } = useNotification();
 
   useEffect(() => {
     const importarProdutos = async () => {
@@ -456,9 +579,65 @@ export default function Produtos() {
     );
   });
 
+  // Fecha dropdown ao clicar fora
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      if (showNotif) setShowNotif(false);
+    }
+    if (showNotif) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotif]);
+
+  const unreadCount = notifs.filter(n => n.unread).length;
+
+  function handleBellClick(e) {
+    e.stopPropagation();
+    setShowNotif(s => !s);
+  }
+  function handleNotifClose(e) {
+    e.stopPropagation();
+    setShowNotif(false);
+  }
+
   return (
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
+      <NotificationBell onClick={handleBellClick} title="Notificações">
+        <BellIcon>
+          <FiBell />
+          {unreadCount > 0 && <BellBadge>{unreadCount}</BellBadge>}
+        </BellIcon>
+      </NotificationBell>
+      {showNotif && (
+        <NotifDropdown onClick={e => e.stopPropagation()}>
+          <NotifHeader>
+            <NotifTitle>Notificações</NotifTitle>
+            <NotifClose onClick={handleNotifClose}><FiX /></NotifClose>
+          </NotifHeader>
+          <NotifList>
+            {notifs.length === 0 && (
+              <NotifItem unread>
+                <NotifMsg>Nenhuma notificação.</NotifMsg>
+              </NotifItem>
+            )}
+            {notifs.map(n => (
+              <NotifItem key={n.id} unread={n.unread}>
+                <NotifMsg>{n.msg}</NotifMsg>
+                <NotifMeta>
+                  <span>{n.type}</span>
+                  <span>•</span>
+                  <span>{n.date instanceof Date ? n.date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : n.date}</span>
+                </NotifMeta>
+              </NotifItem>
+            ))}
+          </NotifList>
+          <button style={{ background: '#23232b', color: '#ede6fa', fontWeight: 600, fontSize: 14, padding: 11, cursor: 'pointer', width: '100%', border: 'none', borderTop: '1px solid #23232b', borderRadius: '0 0 16px 16px', transition: 'background 0.18s, color 0.18s', letterSpacing: 0.1 }} onClick={markAllRead}>Marcar todas como lidas</button>
+        </NotifDropdown>
+      )}
       <Main marginLeft={sidebarWidth}>
         <div style={{ marginTop: 32 }} />
         <Header>

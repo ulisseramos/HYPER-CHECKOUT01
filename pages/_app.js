@@ -7,6 +7,9 @@ import { SidebarProvider } from '../components/SidebarContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
 import { useRouter } from 'next/router';
+import { ToastProvider } from '../components/ToastProvider';
+import SupabaseRealtimeListener from '../components/SupabaseRealtimeListener';
+import { NotificationProvider } from '../components/NotificationContext';
 
 export const AuthContext = createContext();
 
@@ -32,22 +35,27 @@ export default function App({ Component, pageProps, router }) {
     <ThemeProvider theme={theme}>
       <SidebarProvider>
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
-          <div style={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #0a0012 0%, #1a0036 100%)' }}>
-            {nextRouter.pathname !== '/login' && <Sidebar />}
-            <div style={{ flex: 1, minHeight: '100vh' }}>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={router.pathname}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.28, ease: 'easeInOut' }}
-                  style={{ minHeight: '100vh' }}
-                >
-                  <Component {...pageProps} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
+          <NotificationProvider>
+            <ToastProvider>
+              <SupabaseRealtimeListener />
+              <div style={{ display: 'flex', minHeight: '100vh' }}>
+                {nextRouter.pathname !== '/login' && <Sidebar />}
+                <div style={{ flex: 1, minHeight: '100vh' }}>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={router.pathname}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.28, ease: 'easeInOut' }}
+                      style={{ minHeight: '100vh' }}
+                    >
+                      <Component {...pageProps} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </ToastProvider>
+          </NotificationProvider>
         </AuthContext.Provider>
       </SidebarProvider>
     </ThemeProvider>

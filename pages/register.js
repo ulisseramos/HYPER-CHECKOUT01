@@ -59,13 +59,13 @@ const LogoSub = styled.span`
 `;
 const Bg = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0012 0%, #0A0A0F 100%);
+  background: #0b0b0e;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 const Card = styled.div`
-  background: rgba(24, 24, 31, 0.88);
+  background: #101014;
   border-radius: 22px;
   border: 1.5px solid rgba(90,15,214,0.18);
   box-shadow: 0 8px 40px 0 #5a0fd62a, 0 1.5px 16px #0008 inset;

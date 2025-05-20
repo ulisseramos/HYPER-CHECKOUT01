@@ -12,7 +12,7 @@ const glowAnimation = keyframes`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #18181f;
+  background: #0b0b0e;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
@@ -95,7 +95,7 @@ const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(24, 24, 31, 0.88);
+  background: #101014;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 #7c3aed22, 0 1.5px 8px #0006 inset;
   border: none;
@@ -179,7 +179,7 @@ const FiltersBar = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(24, 24, 31, 0.8);
+  background: #101014;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -257,7 +257,7 @@ const ActiveFilters = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(24, 24, 31, 0.8);
+  background: #101014;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -299,7 +299,7 @@ const ClearButton = styled.button`
 `;
 
 const TableCard = styled.div`
-  background: rgba(24, 24, 31, 0.8);
+  background: #101014;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;

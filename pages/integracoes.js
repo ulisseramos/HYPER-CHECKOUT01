@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #18181f;
+  background: #0b0b0e;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
@@ -91,7 +91,7 @@ const IntegrationCard = styled.div`
   align-items: flex-start;
   gap: 18px;
   max-width: 370px;
-  background: #23232b;
+  background: #101014;
   border: 1.5px solid #2d1a4d;
   border-radius: 22px;
   box-shadow: 0 8px 32px 0 #2d1a4d22, 0 1.5px 8px #0006 inset;
@@ -106,7 +106,7 @@ const IntegrationCard = styled.div`
   }
 `;
 const OverviewCard = styled.div`
-  background: rgba(24, 24, 31, 0.93);
+  background: #101014;
   border: 1.5px solid #2d1a4d;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 #7c3aed18, 0 1.5px 8px #0006 inset;
@@ -134,7 +134,7 @@ const SearchBar = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #23232b;
+  background: #101014;
   border-radius: 14px;
   padding: 12px 20px;
   margin-bottom: 32px;

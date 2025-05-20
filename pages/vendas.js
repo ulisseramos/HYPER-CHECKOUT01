@@ -5,7 +5,7 @@ import { FiDollarSign, FiCheckCircle, FiClock, FiTrendingUp, FiSearch, FiRefresh
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0012 0%, #0A0A0F 100%);
+  background: #0b0b0e;
   color: #fff;
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   padding: 32px 0 0 0;
@@ -64,7 +64,7 @@ const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #18181F;
+  background: #101014;
   border-radius: 16px;
   border: 1.2px solid #5a0fd6;
   box-shadow: 0 2px 8px #5a0fd62a;
@@ -117,7 +117,7 @@ const FiltersBar = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #18181F;
+  background: #101014;
   border-radius: 16px;
   border: 1.2px solid #5a0fd6;
   padding: 14px 18px;
@@ -164,7 +164,7 @@ const ActiveFilters = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #18181F;
+  background: #101014;
   border-radius: 16px;
   border: 1.2px solid #5a0fd6;
   padding: 10px 18px;
@@ -197,7 +197,7 @@ const ClearButton = styled.button`
 `;
 
 const TableCard = styled.div`
-  background: #18181F;
+  background: #101014;
   border-radius: 16px;
   border: 1.2px solid #5a0fd6;
   box-shadow: 0 2px 8px #5a0fd62a;

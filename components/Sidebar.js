@@ -7,6 +7,7 @@ import {
 import { FaChartBar } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 import { useSidebar } from './SidebarContext';
+import { useTheme } from 'styled-components';
 
 const menu = [
   { label: 'Dashboard', icon: <FiHome />, path: '/painel' },
@@ -20,7 +21,7 @@ const menu = [
 
 const SidebarContainer = styled.aside`
   width: ${({ collapsed }) => (collapsed ? '84px' : '320px')};
-  background: linear-gradient(120deg, #18181f 70%, #23232b 100%);
+  background: #0b0b0e;
   box-shadow: 0 4px 24px 0 #0004, 0 1.5px 8px #0008 inset;
   min-height: 100vh;
   display: flex;
@@ -34,26 +35,6 @@ const SidebarContainer = styled.aside`
   transition: width 0.35s cubic-bezier(.77,0,.18,1);
   overflow: hidden;
 `;
-const CollapseButton = styled.button`
-  background: #18181f !important;
-  border: 2px solid #a084ff !important;
-  border-radius: 50%;
-  color: #a084ff !important;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.18s, border 0.18s;
-  outline: none;
-  box-shadow: none;
-  overflow: visible;
-  &:hover {
-    background: #23232b !important;
-    border: 2px solid #7c3aed !important;
-  }
-`;
 const LogoWrapper = styled.a`
   display: flex;
   flex-direction: column;
@@ -62,6 +43,7 @@ const LogoWrapper = styled.a`
   text-decoration: none;
   padding: 12px 0 18px 0;
   width: 100%;
+  margin-top: 18px;
 `;
 const LogoCircle = styled.div`
   background: ${({ theme }) => theme.colors.cardSolid};
@@ -109,6 +91,8 @@ const MenuNav = styled.nav`
   flex-direction: column;
   gap: 10px;
   margin-top: 18px;
+  padding-left: 24px;
+  padding-right: 24px;
 `;
 const MenuButton = styled.button`
   display: flex;
@@ -118,26 +102,26 @@ const MenuButton = styled.button`
   font-size: 20px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-weight: ${({ active }) => (active ? 700 : 500)};
-  color: ${({ active, theme }) => (active ? theme.colors.primary : theme.colors.textSecondary)};
-  background: ${({ active }) => (active ? 'rgba(90,15,214,0.13)' : 'transparent')};
-  border: ${({ active, theme }) => (active ? `2.5px solid ${theme.colors.primary}` : '2.5px solid transparent')};
+  color: ${({ active }) => (active ? '#7c3aed' : '#b3b3c6')};
+  background: ${({ active }) => (active ? 'rgba(124, 58, 237, 0.10)' : 'transparent')};
+  border: none;
   border-radius: 16px;
-  min-width: ${({ collapsed }) => (collapsed ? '56px' : '210px')};
-  width: ${({ collapsed }) => (collapsed ? '56px' : 'auto')};
+  min-width: ${({ collapsed }) => (collapsed ? '56px' : '100%')};
+  width: 100%;
   height: 56px;
   padding: ${({ collapsed }) => (collapsed ? '0' : '0 24px 0 28px')};
-  margin: 0 10px;
+  margin: 0 0 0 0;
   cursor: pointer;
-  box-shadow: ${({ active }) => (active ? '0 2px 16px 0 rgba(160,132,255,0.18) inset' : 'none')};
-  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s, width 0.22s, min-width 0.22s, padding 0.22s;
+  box-shadow: none !important;
+  transition: background 0.18s, color 0.18s, width 0.22s, min-width 0.22s, padding 0.22s;
   outline: none;
   position: relative;
   filter: none;
   overflow: visible;
   &:hover {
-    background: rgba(90,15,214,0.18);
-    color: ${({ theme }) => theme.colors.primary};
-    border: 2.5px solid ${({ theme }) => theme.colors.primary}99;
+    background: #5a0fd6;
+    color: #fff;
+    box-shadow: none !important;
   }
 `;
 const MenuIcon = styled.span`
@@ -145,8 +129,11 @@ const MenuIcon = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ active, theme }) => (active ? theme.colors.primary : theme.colors.textSecondary)};
+  color: ${({ active }) => (active ? '#7c3aed' : '#b3b3c6')};
   transition: color 0.18s;
+  ${MenuButton}:hover & {
+    color: #fff;
+  }
 `;
 const Tooltip = styled.div`
   position: absolute;
@@ -235,6 +222,7 @@ const CustomLogo = ({ collapsed }) => (
 );
 
 export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }) {
+  const theme = useTheme();
   const [showTooltip, setShowTooltip] = useState('');
   const { collapsed, setCollapsed } = useSidebar();
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -273,15 +261,6 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
   return (
     <SidebarContainer collapsed={collapsed}>
       <div>
-        {/* Botão de retração */}
-        <div style={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end', alignItems: 'center', padding: '18px 18px 0 18px' }}>
-          <CollapseButton onClick={handleCollapse} aria-label={collapsed ? 'Expandir menu' : 'Retrair menu'}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
-              style={{ display: 'block', margin: 'auto', transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.22s cubic-bezier(.77,0,.18,1)' }}>
-              <path d="M20 10L14 16L20 22" stroke="#a084ff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </svg>
-          </CollapseButton>
-        </div>
         {/* Logo */}
         <CustomLogo collapsed={collapsed} />
         {/* Menu */}
@@ -334,15 +313,15 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
           <div style={{ position: 'relative', width: '100%' }} ref={dropdownRef}>
             <button
               style={{
-                background: '#18181F',
+                background: theme.colors.card,
                 borderRadius: 12,
                 padding: '14px 18px',
                 marginBottom: 16,
-                color: '#fff',
+                color: theme.colors.text,
                 fontWeight: 400,
                 fontSize: 15,
-                boxShadow: '0 0 8px 0 #5a0fd633',
-                border: '1px solid rgba(123,97,255,0.35)',
+                boxShadow: theme.shadows.card,
+                border: `1px solid ${theme.colors.cardBorder}`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -356,24 +335,24 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <img
-                  src="https://ui-avatars.com/api/?name=Ulisses+ramos&background=7B61FF&color=fff&size=44&rounded=true"
+                  src="https://ui-avatars.com/api/?name=Ulisses+ramos&background=23232B&color=ede6fa&size=44&rounded=true"
                   alt="Avatar"
                   style={{
                     width: 38,
                     height: 38,
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '1px solid rgba(123,97,255,0.6)',
-                    boxShadow: '0 0 8px 0 #5a0fd633',
+                    border: `1px solid ${theme.colors.inputBorder}`,
+                    boxShadow: theme.shadows.card,
                     marginRight: 10,
                   }}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, fontFamily: 'Inter, Poppins, Segoe UI, Arial, sans-serif', color: '#fff', lineHeight: 1.1 }}>{user.name}</div>
-                  <div style={{ color: '#fff', fontSize: 13, fontWeight: 500, fontFamily: 'Inter, Poppins, Segoe UI, Arial, sans-serif', marginTop: 2, lineHeight: 1.1 }}>{user.email}</div>
+                  <div style={{ fontWeight: 600, fontSize: 16, fontFamily: theme.fonts.body, color: theme.colors.text, lineHeight: 1.1 }}>{user.name}</div>
+                  <div style={{ color: theme.colors.textSecondary, fontSize: 13, fontWeight: 500, fontFamily: theme.fonts.body, marginTop: 2, lineHeight: 1.1 }}>{user.email}</div>
                 </div>
               </div>
-              <FiChevronDown style={{ color: '#5a0fd6', fontSize: 20, marginLeft: 12 }} />
+              <FiChevronDown style={{ color: theme.colors.primary, fontSize: 20, marginLeft: 12 }} />
             </button>
             {showDropdown && (
               <div style={{
@@ -417,7 +396,7 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
                     borderBottom: '1px solid #23232B',
                     transition: 'background 0.15s',
                   }}
-                  onClick={() => { setShowProfileModal(true); setShowDropdown(false); }}
+                  onClick={() => { router.push('/configuracoes'); setShowDropdown(false); }}
                 >
                   <FiSettings style={{ marginRight: 10, fontSize: 18, verticalAlign: -2 }} /> Configurações
                 </button>

@@ -4,10 +4,11 @@ import { supabase } from '../../lib/supabaseClient';
 import { createPixQrCode } from '../../lib/pushinpay';
 import styled from 'styled-components';
 import { FiZap, FiShoppingCart, FiChevronDown, FiTag } from 'react-icons/fi';
+import { useToast } from '../../components/ToastProvider';
 
 const Bg = styled.div`
   min-height: 100vh;
-  background: #f7f7fa;
+  background: #0b0b0e;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -20,13 +21,14 @@ const Bg = styled.div`
 const Funnel = styled.div`
   width: 100%;
   max-width: 430px;
-  background: #fff;
+  background: #101014;
   border-radius: 22px;
-  box-shadow: 0 4px 32px #0001, 0 1px 4px #0002;
+  box-shadow: 0 4px 32px #0004, 0 1px 4px #0002;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   margin: 32px 0;
+  border: 1.5px solid #18181f;
   @media (max-width: 600px) {
     max-width: 100vw;
     min-height: 100vh;
@@ -193,21 +195,21 @@ const CouponToggle = styled.div`
 const CouponInput = styled.input`
   width: 100%;
   padding: 10px 12px;
-  border: 1.5px solid #eee;
+  border: 1.5px solid #23232b;
   border-radius: 8px;
   font-size: 1rem;
   margin-top: 8px;
   margin-bottom: 8px;
-  background: #fff;
-  color: #232b3b;
+  background: #18181f;
+  color: #ede6fa;
 `;
 const Input = styled.input`
   width: 100%;
   padding: 14px 16px;
-  background: #fff;
-  border: 1.5px solid #eee;
+  background: #18181f;
+  border: 1.5px solid #23232b;
   border-radius: 10px;
-  color: #232b3b;
+  color: #ede6fa;
   font-size: 1.08rem;
   outline: none;
   margin-bottom: 14px;
@@ -217,12 +219,12 @@ const Input = styled.input`
     opacity: 1;
   }
   &:focus {
-    border: 1.5px solid #e53935;
+    border: 1.5px solid #a084ff;
   }
 `;
 const ErrorMsg = styled.div`
   color: #e53935;
-  background: #fff0f0;
+  background: #23232b;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 1rem;
@@ -270,8 +272,8 @@ const QrImg = styled.img`
 `;
 const PixCode = styled.div`
   word-break: break-all;
-  background: #f7f7fa;
-  color: #232b3b;
+  background: #23232b;
+  color: #ede6fa;
   padding: 10px;
   border-radius: 8px;
   margin: 8px 0;
@@ -301,6 +303,7 @@ const CopyButton = styled.button`
 export default function CheckoutPage() {
   const router = useRouter();
   const { id } = router.query;
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [checkout, setCheckout] = useState(null);
@@ -366,6 +369,26 @@ export default function CheckoutPage() {
     return { h, m, s };
   }
 
+  function notifyPix(valor) {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification('HYPER CHECKOUT', {
+          body: `Pix gerado\nVocê recebeu: R$ ${valor}`,
+          icon: 'https://sdmntprwestus2.oaiusercontent.com/files/00000000-22e4-61f8-a326-e49826263e11/raw?se=2025-05-20T04%3A53%3A51Z&sp=r&sv=2024-08-04&sr=b&scid=29dc9d40-f906-5287-9712-cca798b335b1&skoid=30ec2761-8f41-44db-b282-7a0f8809659b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-20T00%3A31%3A31Z&ske=2025-05-21T00%3A31%3A31Z&sks=b&skv=2024-08-04&sig=zy3JmTeBfXKsZPSczur3wKfoMPgex2EtEj1p%2BAcZdUU%3D'
+        });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('HYPER CHECKOUT', {
+              body: `Pix gerado\nVocê recebeu: R$ ${valor}`,
+              icon: 'https://sdmntprwestus2.oaiusercontent.com/files/00000000-22e4-61f8-a326-e49826263e11/raw?se=2025-05-20T04%3A53%3A51Z&sp=r&sv=2024-08-04&sr=b&scid=29dc9d40-f906-5287-9712-cca798b335b1&skoid=30ec2761-8f41-44db-b282-7a0f8809659b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-20T00%3A31%3A31Z&ske=2025-05-21T00%3A31%3A31Z&sks=b&skv=2024-08-04&sig=zy3JmTeBfXKsZPSczur3wKfoMPgex2EtEj1p%2BAcZdUU%3D'
+            });
+          }
+        });
+      }
+    }
+  }
+
   // Gerar PIX via Pushin Pay
   const handleGeneratePix = async () => {
     setEmailError('');
@@ -395,6 +418,11 @@ export default function CheckoutPage() {
       const valueCents = Math.round(Number(product.price) * 100);
       const pix = await createPixQrCode(token, { value: valueCents });
       setPixData(pix);
+      showToast({
+        title: 'Pix gerado!',
+        message: 'O Pix foi gerado com sucesso. Confira o QR Code ou código para pagamento.',
+      });
+      notifyPix((Number(product.price)).toFixed(2));
     } catch (e) {
       setError('Erro ao gerar PIX: ' + (e.message || e));
     }

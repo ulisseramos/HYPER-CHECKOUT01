@@ -59,7 +59,7 @@ const Container = styled.div`
   padding: 32px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #0a0012 0%, #1a0036 100%);
+  background: #0b0b0e;
 `;
 
 const ContentWrapper = styled.div`
@@ -72,7 +72,7 @@ const HeaderSection = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
-  background: ${props => props.theme.card};
+  background: #101014;
   padding: 24px;
   border-radius: 16px;
   border: 1px solid ${props => props.theme.border};
@@ -88,7 +88,7 @@ const StatsGrid = styled.div`
 `;
 
 const Card = styled.div`
-  background: ${props => props.theme.card};
+  background: #101014;
   border-radius: 16px;
   border: 1px solid ${props => props.theme.border};
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -198,7 +198,7 @@ const Modal = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: ${props => props.theme.card};
+  background: #101014;
   border-radius: 16px;
   border: 1px solid ${props => props.theme.border};
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
