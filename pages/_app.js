@@ -20,8 +20,12 @@ export default function App({ Component, pageProps, router }) {
   useEffect(() => {
     const token = Cookies.get('auth_token');
     setIsAuthenticated(!!token);
-    // Redireciona para login se não autenticado e não está na página de login
-    if (!token && nextRouter.pathname !== '/login') {
+    // Corrigir: permitir acesso livre ao checkout
+    if (!token &&
+      nextRouter.pathname !== '/login' &&
+      nextRouter.pathname !== '/register' &&
+      !nextRouter.pathname.startsWith('/checkout')
+    ) {
       nextRouter.replace('/login');
     }
   }, [nextRouter]);
@@ -39,7 +43,7 @@ export default function App({ Component, pageProps, router }) {
             <ToastProvider>
               <SupabaseRealtimeListener />
               <div style={{ display: 'flex', minHeight: '100vh' }}>
-                {nextRouter.pathname !== '/login' && <Sidebar />}
+                {nextRouter.pathname !== '/login' && nextRouter.pathname !== '/register' && !nextRouter.pathname.startsWith('/checkout') && <Sidebar />}
                 <div style={{ flex: 1, minHeight: '100vh' }}>
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div

@@ -1,274 +1,293 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { createPixQrCode } from '../../lib/pushinpay';
 import styled from 'styled-components';
-import { FiZap, FiShoppingCart, FiChevronDown, FiTag } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiCreditCard, FiClock, FiZap, FiTag, FiCheckCircle } from 'react-icons/fi';
 import { useToast } from '../../components/ToastProvider';
+import { IoTimeOutline } from 'react-icons/io5';
+import { GoClock } from 'react-icons/go';
 
-const Bg = styled.div`
-  min-height: 100vh;
-  background: #0b0b0e;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 32px 0;
-  @media (max-width: 600px) {
-    padding: 0;
-    align-items: stretch;
-  }
-`;
-const Funnel = styled.div`
-  width: 100%;
-  max-width: 430px;
-  background: #101014;
-  border-radius: 22px;
-  box-shadow: 0 4px 32px #0004, 0 1px 4px #0002;
-  overflow: hidden;
+const TopBar = styled.div`
+  width: 100vw;
+  max-width: 100vw;
+  background: #19191d;
   display: flex;
   flex-direction: column;
-  margin: 32px 0;
-  border: 1.5px solid #18181f;
-  @media (max-width: 600px) {
-    max-width: 100vw;
-    min-height: 100vh;
-    border-radius: 0;
-    margin: 0;
-    box-shadow: none;
-  }
-  @media (min-width: 900px) {
-    max-width: 100vw;
-    min-height: 100vh;
-    border-radius: 0;
-    margin: 0;
-    box-shadow: none;
-  }
+  align-items: center;
+  padding: 0;
+  margin-bottom: 0;
 `;
-const Banner = styled.div`
-  background:rgb(0, 0, 0);
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.18rem;
-  padding: 22px 0 12px 0;
-  text-align: center;
-  position: relative;
-  letter-spacing: 0.5px;
-  @media (max-width: 600px) {
-    font-size: 1.05rem;
-    padding: 16px 0 8px 0;
-  }
-`;
-const Timer = styled.div`
+const TimerBlockCard = styled.div`
+  width: 100vw;
+  background: #F5143D;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 18px;
-  font-size: 1.6rem;
+  padding: 22px 0 18px 0;
+  margin-bottom: 0;
+  font-family: 'Inter', Arial, sans-serif;
+`;
+const TimerBlockIcon = styled.div`
+  color: #fff;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+`;
+const TimerBlockTitle = styled.div`
+  color: #fff;
+  font-size: 1.22rem;
+  font-weight: 800;
+  font-family: 'Inter', Arial, sans-serif;
+  text-align: center;
+  margin-bottom: 2px;
+  letter-spacing: 1.2px;
+`;
+const TimerBlockSub = styled.div`
+  color: #fff;
+  font-size: 1.01rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-align: center;
+  font-family: 'Inter', Arial, sans-serif;
+`;
+const TimerBlocks = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-family: 'Inter', Arial, sans-serif;
+`;
+const TimerBlock = styled.div`
+  background: #ff2950;
+  border-radius: 10px;
+  min-width: 62px;
+  min-height: 62px;
+  max-width: 62px;
+  max-height: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', Arial, sans-serif;
+  box-shadow: 0 2px 8px #0001;
+`;
+const TimerNumber = styled.div`
+  font-size: 1.45rem;
   font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  text-align: center;
+`;
+const TimerLabel = styled.div`
+  font-size: 0.89rem;
+  font-weight: 700;
+  color: #fff;
+  opacity: 1;
   margin-top: 2px;
   letter-spacing: 2px;
-  span { font-size: 0.8rem; font-weight: 500; display: block; }
-  @media (max-width: 600px) {
-    font-size: 1.1rem;
-    gap: 10px;
-  }
-`;
-const CouponBar = styled.div`
-  background: #232b3b;
-  color: #fff;
-  font-size: 1.05rem;
-  font-weight: 600;
-  padding: 12px 0;
   text-align: center;
-  @media (max-width: 600px) {
-    font-size: 0.98rem;
-    padding: 8px 0;
-  }
 `;
-const ProductBanner = styled.div`
-  width: 100%;
-  height: 140px;
-  background: #eee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  @media (max-width: 600px) {
-    height: 90px;
-  }
-`;
-const ProductImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-const ProductHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 22px 22px 0 22px;
-  @media (max-width: 600px) {
-    padding: 14px 12px 0 12px;
-  }
-`;
-const ProductName = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.18rem;
-  font-weight: 800;
-  color: #232b3b;
-  @media (max-width: 600px) {
-    font-size: 1.02rem;
-    gap: 6px;
-  }
-`;
-const Cart = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #232b3b;
-  font-weight: 700;
-  font-size: 1.13rem;
-  @media (max-width: 600px) {
-    font-size: 1rem;
-  }
-`;
-const Steps = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 22px 22px 0 22px;
-  gap: 12px;
-  @media (max-width: 600px) {
-    padding: 12px 8px 0 8px;
-    gap: 6px;
-  }
-`;
-const Step = styled.div`
-  flex: 1;
+const TimerPhraseBar = styled.div`
+  width: 100vw;
+  background: #F5143D;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 12px 0 8px 0;
+`;
+const TimerPhraseText = styled.div`
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 800;
+  font-family: 'Montserrat', 'Poppins', 'Inter', Arial, sans-serif;
+  text-align: center;
+`;
+const TimerPhraseSub = styled.div`
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 2px;
+  text-align: center;
+  font-family: 'Montserrat', 'Poppins', 'Inter', Arial, sans-serif;
+`;
+const Banner = styled.img`
+  width: 100vw;
+  max-width: 420px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 0 0 18px 18px;
+  margin-bottom: 0;
+  background: #23232b;
+`;
+const Container = styled.div`
+  min-height: 100vh;
+  background: #131316;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', 'Inter', Arial, sans-serif;
+  padding: 0 0 32px 0;
+`;
+const ProductName = styled.div`
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  color: #b3b3c6;
+  font-size: 1.01rem;
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+const Card = styled.div`
+  background: rgba(24, 24, 31, 0.85);
+  border-radius: 26px;
+  padding: 44px 28px 36px 28px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25), 0 1.5px 8px 0 #0002;
+  min-width: 340px;
+  max-width: 98vw;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 32px;
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  @media (max-width: 600px) {
+    padding: 22px 4vw 18px 4vw;
+    min-width: unset;
+    margin-top: 18px;
+  }
+`;
+const Stepper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin: 18px 0 18px 0;
+`;
+const Step = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${({ active }) => (active ? '#fff' : '#b3b3c6')};
+  font-weight: ${({ active }) => (active ? 800 : 500)};
 `;
 const StepCircle = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: ${props => props.active ? 'linear-gradient(90deg, #e53935 60%, #ff7043 100%)' : '#eee'};
-  color: ${props => props.active ? '#fff' : '#b3b3c6'};
+  background: ${({ active }) => (active ? 'linear-gradient(135deg, #ff2950 60%, #ff5e62 100%)' : '#18181f')};
+  border: 2.5px solid ${({ active }) => (active ? '#fff' : '#23232b')};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 1.18rem;
   margin-bottom: 4px;
-  box-shadow: ${props => props.active ? '0 2px 8px #e539352a' : 'none'};
-  transition: background 0.18s, color 0.18s;
+  color: ${({ active }) => (active ? '#fff' : '#b3b3c6')};
+  box-shadow: ${({ active }) => (active ? '0 2px 8px #ff295055' : 'none')};
+  transition: all 0.2s;
 `;
 const StepLabel = styled.div`
   font-size: 1.01rem;
-  color: #232b3b;
   font-weight: 700;
-  @media (max-width: 600px) {
-    font-size: 0.93rem;
-  }
 `;
-const Section = styled.div`
-  padding: 22px 22px 0 22px;
-  @media (max-width: 600px) {
-    padding: 14px 8px 0 8px;
-  }
-`;
-const CouponToggle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #232b3b;
-  font-weight: 700;
-  font-size: 1.01rem;
-  cursor: pointer;
-  margin-bottom: 10px;
-  @media (max-width: 600px) {
-    font-size: 0.97rem;
-  }
-`;
-const CouponInput = styled.input`
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid #23232b;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-top: 8px;
+const Logo = styled.img`
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  border-radius: 12px;
   margin-bottom: 8px;
   background: #18181f;
-  color: #ede6fa;
+  box-shadow: 0 2px 12px #0002;
 `;
-const Input = styled.input`
+const Title = styled.h1`
+  font-size: 1.45rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #fff;
+  text-align: center;
+`;
+const Info = styled.div`
+  font-size: 1.08rem;
+  color: #b3b3c6;
+  margin-bottom: 6px;
+  text-align: center;
+`;
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 22px;
   width: 100%;
-  padding: 14px 16px;
+`;
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: center;
   background: #18181f;
   border: 1.5px solid #23232b;
-  border-radius: 10px;
-  color: #ede6fa;
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: border 0.2s;
+  &:focus-within {
+    border: 1.5px solid #ff2950;
+    box-shadow: 0 0 0 2px #ff295033;
+  }
+`;
+const Input = styled.input`
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 15px 0;
   font-size: 1.08rem;
+  width: 100%;
   outline: none;
-  margin-bottom: 14px;
-  transition: border 0.18s;
+  font-family: 'Inter', Arial, sans-serif;
   &::placeholder {
     color: #b3b3c6;
     opacity: 1;
-  }
-  &:focus {
-    border: 1.5px solid #a084ff;
+    font-weight: 500;
   }
 `;
 const ErrorMsg = styled.div`
-  color: #e53935;
-  background: #23232b;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 1rem;
-  margin-bottom: 2px;
-  text-align: center;
+  color: #ff4d6d;
+  font-weight: 600;
+  font-size: 0.98rem;
 `;
 const Button = styled.button`
-  width: 100%;
-  padding: 15px 0;
-  background: linear-gradient(90deg,rgb(0, 0, 0) 0%, #ff7043 100%);
+  background: #15803d;
   color: #fff;
   border: none;
   border-radius: 12px;
-  font-size: 1.18rem;
-  font-weight: 900;
-  margin-top: 10px;
-  box-shadow: 0 2px 12px #e539352a;
+  padding: 16px 0;
+  font-weight: 800;
+  font-size: 1.13rem;
   cursor: pointer;
-  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  margin-top: 10px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #15803d22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
   &:hover {
-    background: linear-gradient(90deg, #ff7043 0%,rgb(0, 0, 0) 100%);
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 4px 18px #e5393533;
-  }
-  @media (max-width: 600px) {
-    font-size: 1.05rem;
-    padding: 13px 0;
+    background: #166534;
+    box-shadow: 0 4px 16px #15803d33;
   }
 `;
-const QrSection = styled.div`
-  margin-top: 36px;
+const PixBox = styled.div`
+  margin-top: 32px;
   text-align: center;
-`;
-const QrImg = styled.img`
-  width: 220px;
-  height: 220px;
-  margin: 16px auto;
-  display: block;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px #e539352a;
-  @media (max-width: 600px) {
-    width: 160px;
-    height: 160px;
-  }
 `;
 const PixCode = styled.div`
   word-break: break-all;
@@ -277,27 +296,52 @@ const PixCode = styled.div`
   padding: 10px;
   border-radius: 8px;
   margin: 8px 0;
-  font-size: 1rem;
+  font-size: 15px;
 `;
-const CopyButton = styled.button`
-  background: #e53935;
+const CopyBtn = styled.button`
+  background: #23232b;
   color: #fff;
   border: none;
   border-radius: 8px;
   padding: 8px 18px;
-  font-size: 1rem;
   font-weight: 700;
-  margin-top: 8px;
   cursor: pointer;
-  transition: background 0.18s, transform 0.12s;
-  &:hover {
-    background: #ff7043;
-    transform: scale(1.03);
-  }
-  @media (max-width: 600px) {
-    font-size: 0.97rem;
-    padding: 8px 10px;
-  }
+  margin-top: 8px;
+  font-size: 1rem;
+`;
+
+// Adicionar ícone do Pix (SVG inline)
+const PixIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="40" height="40" rx="12" fill="#18181f"/>
+    <path d="M20.001 13.333c-1.84 0-3.6.72-4.92 2.04l-2.04 2.04a2.8 2.8 0 000 3.96l2.04 2.04a6.96 6.96 0 009.84 0l2.04-2.04a2.8 2.8 0 000-3.96l-2.04-2.04A6.96 6.96 0 0020 13.333zm0 1.334c1.48 0 2.88.58 3.94 1.64l2.04 2.04c.52.52.52 1.36 0 1.88l-2.04 2.04a5.6 5.6 0 01-7.88 0l-2.04-2.04a1.32 1.32 0 010-1.88l2.04-2.04A5.56 5.56 0 0120 14.667zm0 2.666a2.67 2.67 0 00-1.88.78l-.7.7a.67.67 0 000 .94l.7.7a2.67 2.67 0 003.76 0l.7-.7a.67.67 0 000-.94l-.7-.7A2.67 2.67 0 0020 17.333z" fill="#00B686"/>
+  </svg>
+);
+
+const PaymentSection = styled.div`
+  width: 100%;
+  margin-bottom: 18px;
+`;
+const PaymentTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+`;
+const PaymentCard = styled.div`
+  background: #18181f;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px #0002;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 600;
 `;
 
 export default function CheckoutPage() {
@@ -316,12 +360,24 @@ export default function CheckoutPage() {
   const [cpf, setCpf] = useState('');
   const [emailError, setEmailError] = useState('');
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos em segundos
-  const [showCoupon, setShowCoupon] = useState(false);
-  const [coupon, setCoupon] = useState('');
+  const [cupom, setCupom] = useState('');
+  const [showCupom, setShowCupom] = useState(false);
+  const [fetchTries, setFetchTries] = useState(0);
+  const maxFetchTries = 3;
 
-  useEffect(() => {
+  // Cores customizáveis (futuro: vir do banco)
+  const primaryColor = checkout?.primary_color || '#23232b';
+  // Logo/banner customizável (futuro: vir do banco)
+  const logoUrl = checkout?.logo_url || product?.logo_url || null;
+  const bannerUrl = product?.banner_url || null;
+  const cupomAtivo = checkout?.cupom || '05OFF';
+  const cupomMsg = checkout?.cupom_msg || 'Adicione o cupom 05OFF para mais 5% de desconto.';
+
+  // Frase customizável acima do timer
+  const timerPhrase = 'OFERTA POR TEMPO LIMITADO!';
+
+  const fetchData = useCallback(async () => {
     if (!id) return;
-    const fetchData = async () => {
       setLoading(true);
       setError('');
       // Buscar checkout
@@ -331,7 +387,7 @@ export default function CheckoutPage() {
         .eq('id', id)
         .single();
       if (errCheckout || !checkoutData) {
-        setError('Checkout não encontrado.');
+      setError('Erro ao buscar checkout: ' + (errCheckout?.message || 'Não encontrado'));
         setLoading(false);
         return;
       }
@@ -343,15 +399,17 @@ export default function CheckoutPage() {
         .eq('id', checkoutData.product_id)
         .single();
       if (errProduct || !productData) {
-        setError('Produto não encontrado.');
+      setError('Erro ao buscar produto: ' + (errProduct?.message || 'Não encontrado'));
         setLoading(false);
         return;
       }
       setProduct(productData);
       setLoading(false);
-    };
-    fetchData();
   }, [id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (!product) return;
@@ -374,14 +432,14 @@ export default function CheckoutPage() {
       if (Notification.permission === 'granted') {
         new Notification('HYPER CHECKOUT', {
           body: `Pix gerado\nVocê recebeu: R$ ${valor}`,
-          icon: 'https://sdmntprwestus2.oaiusercontent.com/files/00000000-22e4-61f8-a326-e49826263e11/raw?se=2025-05-20T04%3A53%3A51Z&sp=r&sv=2024-08-04&sr=b&scid=29dc9d40-f906-5287-9712-cca798b335b1&skoid=30ec2761-8f41-44db-b282-7a0f8809659b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-20T00%3A31%3A31Z&ske=2025-05-21T00%3A31%3A31Z&sks=b&skv=2024-08-04&sig=zy3JmTeBfXKsZPSczur3wKfoMPgex2EtEj1p%2BAcZdUU%3D'
+          icon: 'https://i.imgur.com/1z5yHIU.png'
         });
       } else if (Notification.permission !== 'denied') {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
             new Notification('HYPER CHECKOUT', {
               body: `Pix gerado\nVocê recebeu: R$ ${valor}`,
-              icon: 'https://sdmntprwestus2.oaiusercontent.com/files/00000000-22e4-61f8-a326-e49826263e11/raw?se=2025-05-20T04%3A53%3A51Z&sp=r&sv=2024-08-04&sr=b&scid=29dc9d40-f906-5287-9712-cca798b335b1&skoid=30ec2761-8f41-44db-b282-7a0f8809659b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-20T00%3A31%3A31Z&ske=2025-05-21T00%3A31%3A31Z&sks=b&skv=2024-08-04&sig=zy3JmTeBfXKsZPSczur3wKfoMPgex2EtEj1p%2BAcZdUU%3D'
+              icon: 'https://i.imgur.com/1z5yHIU.png'
             });
           }
         });
@@ -395,6 +453,11 @@ export default function CheckoutPage() {
     // Validação simples de e-mail
     if (!email || !/^[^@\s]+@gmail\.com$/.test(email)) {
       setEmailError('Informe um e-mail gmail válido para gerar o pagamento.');
+      return;
+    }
+    // Verificação de checkout carregado
+    if (!checkout || !checkout.user_id) {
+      setError('Erro: informações do checkout não carregadas. Tente recarregar a página.');
       return;
     }
     setGeneratingPix(true);
@@ -431,89 +494,99 @@ export default function CheckoutPage() {
 
   const { h, m, s } = formatTime(timeLeft);
 
+  // Stepper (apenas visual, etapa 1)
+  const step = 1;
+
   return (
-    <Bg>
-      <Funnel>
-        <Banner>
-          Sua oferta termina em:
-          <Timer>
-            <div>{h}<span>HORAS</span></div> :
-            <div>{m}<span>MIN</span></div> :
-            <div>{s}<span>SEG</span></div>
-          </Timer>
-        </Banner>
-        <CouponBar>
-          Adicione o cupom <b>O5OFF</b> para mais <b>5% de desconto</b>.
-        </CouponBar>
-        <ProductBanner>
-          {product?.imageUrl && <ProductImg src={product.imageUrl} alt={product?.name} />}
-        </ProductBanner>
-        <ProductHeader>
-          <ProductName><FiZap color="#e53935" /> {product?.name || 'Produto'}</ProductName>
-          <Cart><FiShoppingCart /> 1</Cart>
-        </ProductHeader>
-        <Steps>
-          <Step><StepCircle active>1</StepCircle><StepLabel>Identificação</StepLabel></Step>
-          <Step><StepCircle>2</StepCircle><StepLabel>Pagamento</StepLabel></Step>
-          <Step><StepCircle>3</StepCircle><StepLabel>Confirmação</StepLabel></Step>
-        </Steps>
-        <Section>
-          <CouponToggle onClick={() => setShowCoupon(v => !v)}>
-            <FiTag /> Tem um cupom de desconto? <FiChevronDown style={{ transform: showCoupon ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-          </CouponToggle>
-          {showCoupon && <CouponInput placeholder="Digite seu cupom" value={coupon} onChange={e => setCoupon(e.target.value)} />}
-          <Input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            disabled={timeLeft === 0}
-            style={{ marginBottom: 4 }}
-          />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <input type="checkbox" id="noemail" style={{ accentColor: '#e53935' }} disabled />
-            <label htmlFor="noemail" style={{ color: '#b3b3c6', fontSize: '0.98rem' }}>Não tenho e-mail</label>
-          </div>
-          <Input
-            type="tel"
-            placeholder="Telefone"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            disabled={timeLeft === 0}
-          />
-          <Input
-            type="text"
-            placeholder="Nome completo"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            disabled={timeLeft === 0}
-          />
-          <Input
-            type="text"
-            placeholder="CPF/CNPJ"
-            value={cpf}
-            onChange={e => setCpf(e.target.value)}
-            disabled={timeLeft === 0}
-          />
-          {emailError && <ErrorMsg>{emailError}</ErrorMsg>}
-          {error && <ErrorMsg>{error}</ErrorMsg>}
-          <Button onClick={handleGeneratePix} disabled={generatingPix || timeLeft === 0}>
-            {timeLeft === 0 ? 'Tempo expirado' : (generatingPix ? 'Gerando PIX...' : 'Gerar PIX para pagamento')}
-          </Button>
-          {pixData && (
-            <QrSection>
-              <h3 style={{ color: '#232b3b', fontWeight: 800, fontSize: '1.1rem', marginBottom: 8 }}>Escaneie o QR Code PIX ou copie o código</h3>
-              <QrImg src={`data:image/png;base64,${pixData.qr_code_base64}`} alt="QR Code PIX" />
-              <div style={{ marginTop: 12, fontSize: 13 }}>
-                <b style={{ color: '#232b3b' }}>Código PIX (copie e cole no app do seu banco):</b>
-                <PixCode>{pixData.qr_code}</PixCode>
-                <CopyButton onClick={() => navigator.clipboard.writeText(pixData.qr_code)}>Copiar código</CopyButton>
-              </div>
-            </QrSection>
+    <>
+      <TopBar>
+        <TimerBlockCard>
+          <TimerBlockTitle>Oferta por Tempo Limitado</TimerBlockTitle>
+          <TimerBlockSub>Não perca essa oportunidade!</TimerBlockSub>
+          <TimerBlocks>
+            <TimerBlockIcon style={{marginBottom:0, marginRight:10}}>
+              <GoClock color="#fff" size={32} />
+            </TimerBlockIcon>
+            <TimerBlock>
+              <TimerNumber>{h}</TimerNumber>
+              <TimerLabel>HORAS</TimerLabel>
+            </TimerBlock>
+            <TimerBlock>
+              <TimerNumber>{m}</TimerNumber>
+              <TimerLabel>MIN</TimerLabel>
+            </TimerBlock>
+            <TimerBlock>
+              <TimerNumber>{s}</TimerNumber>
+              <TimerLabel>SEG</TimerLabel>
+            </TimerBlock>
+          </TimerBlocks>
+        </TimerBlockCard>
+      </TopBar>
+      {bannerUrl && <Banner src={bannerUrl} alt="Banner do produto" style={{margin: '18px auto 0 auto', display: 'block'}} />}
+    <Container>
+      <Card>
+          {product && <ProductName>{product.name}</ProductName>}
+          {logoUrl && <Logo src={logoUrl} alt="Logo do checkout" />}
+          <Title>{checkout?.checkout_name || 'Checkout'}</Title>
+          {loading && (
+            <div style={{ color: '#b3b3c6', fontWeight: 700, margin: '18px 0', textAlign: 'center' }}>
+              Carregando checkout...
+            </div>
           )}
-        </Section>
-      </Funnel>
-    </Bg>
+          {error && !loading && (
+            <div style={{ color: '#ff4d6d', fontWeight: 700, margin: '18px 0', textAlign: 'center' }}>
+              {error}
+              </div>
+          )}
+          {!pixData && (
+            <form onSubmit={e => { e.preventDefault(); handleGeneratePix(); }} style={{ width: '100%' }}>
+              <FormGroup>
+                <InputWrapper>
+                  <FiMail style={{ color: '#b3b3c6', marginRight: 8 }} />
+                  <Input required placeholder="E-mail (gmail)" value={email} onChange={e => setEmail(e.target.value)} />
+                </InputWrapper>
+                <InputWrapper>
+                  <FiPhone style={{ color: '#b3b3c6', marginRight: 8 }} />
+                  <Input required placeholder="Telefone" value={phone} onChange={e => setPhone(e.target.value)} />
+                </InputWrapper>
+                <InputWrapper>
+                  <FiUser style={{ color: '#b3b3c6', marginRight: 8 }} />
+                  <Input required placeholder="Nome completo" value={name} onChange={e => setName(e.target.value)} />
+                </InputWrapper>
+                <InputWrapper>
+                  <FiCreditCard style={{ color: '#b3b3c6', marginRight: 8 }} />
+                  <Input required placeholder="CPF/CNPJ" value={cpf} onChange={e => setCpf(e.target.value)} />
+                </InputWrapper>
+                {emailError && <ErrorMsg>{emailError}</ErrorMsg>}
+                {error && <ErrorMsg>{error}</ErrorMsg>}
+                <PaymentSection>
+                  <PaymentTitle>
+                    <FiCreditCard size={20} style={{marginBottom: -2}} /> Pagamento
+                  </PaymentTitle>
+                  <PaymentCard>
+                    <input type="radio" checked readOnly style={{accentColor: '#00B686', marginRight: 8}} />
+                    <PixIcon /> Pix
+                  </PaymentCard>
+                </PaymentSection>
+                <Button type="submit" disabled={generatingPix}>
+                  {generatingPix ? 'Processando...' : 'Finalizar compra'}
+                </Button>
+              </FormGroup>
+            </form>
+          )}
+            {pixData && (
+            <PixBox>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>QR Code PIX</div>
+              <img src={pixData.qr_code_base64} alt="QR Code PIX" style={{ width: 220, height: 220, borderRadius: 12, boxShadow: '0 2px 12px #0003', marginBottom: 12 }} />
+                <div style={{ marginTop: 12, fontSize: 13 }}>
+                  <b style={{ color: '#b3b3c6' }}>Código PIX (copie e cole no app do seu banco):</b>
+                <PixCode>{pixData.qr_code}</PixCode>
+                <CopyBtn onClick={() => navigator.clipboard.writeText(pixData.qr_code)}>Copiar código</CopyBtn>
+              </div>
+            </PixBox>
+        )}
+      </Card>
+    </Container>
+    </>
   );
 } 

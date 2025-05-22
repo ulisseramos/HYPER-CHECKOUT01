@@ -8,6 +8,7 @@ import { FaChartBar } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 import { useSidebar } from './SidebarContext';
 import { useTheme } from 'styled-components';
+import { supabase } from '../lib/supabaseClient';
 
 const menu = [
   { label: 'Dashboard', icon: <FiHome />, path: '/painel' },
@@ -20,7 +21,9 @@ const menu = [
 ];
 
 const SidebarContainer = styled.aside`
-  width: ${({ collapsed }) => (collapsed ? '84px' : '320px')};
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
   background: #0b0b0e;
   box-shadow: 0 4px 24px 0 #0004, 0 1.5px 8px #0008 inset;
   min-height: 100vh;
@@ -32,8 +35,8 @@ const SidebarContainer = styled.aside`
   left: 0; top: 0; bottom: 0;
   z-index: 100;
   font-family: ${({ theme }) => theme.fonts.body};
-  transition: width 0.35s cubic-bezier(.77,0,.18,1);
-  overflow: hidden;
+  transition: none;
+  overflow: auto;
 `;
 const LogoWrapper = styled.a`
   display: flex;
@@ -204,20 +207,85 @@ const Divider = styled.div`
   margin: 10px 0 10px 0;
   border-radius: 1px;
 `;
+const AccountDropdown = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  min-width: 240px;
+  background: rgba(24, 24, 31, 0.82);
+  border: 1.5px solid #35354a;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 #0008, 0 1.5px 8px #a084ff22 inset;
+  z-index: 3000;
+  padding: 10px 0 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: fadeInUp .18s;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: box-shadow 0.18s, border 0.18s, background 0.18s;
+`;
+const AccountDropdownTitle = styled.div`
+  padding: 16px 28px 12px 28px;
+  color: #ede6fa;
+  font-weight: 900;
+  font-size: 1.13rem;
+  cursor: not-allowed;
+  opacity: 0.85;
+  border-bottom: 1px solid #23232B;
+  user-select: none;
+  letter-spacing: 0.2px;
+`;
+const AccountDropdownButton = styled.button`
+  background: none;
+  border: none;
+  color: #ede6fa;
+  font-weight: 700;
+  font-size: 1.08rem;
+  padding: 15px 28px 15px 28px;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid #23232B;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px 12px 0 0;
+  &:hover {
+    background: rgba(160, 132, 255, 0.10);
+    color: #a084ff;
+    box-shadow: 0 2px 12px #a084ff22;
+    transform: translateY(-2px) scale(1.03);
+  }
+`;
+const AccountDropdownButtonDanger = styled(AccountDropdownButton)`
+  color: #ff4d6d;
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+  &:hover {
+    background: rgba(255, 77, 109, 0.10);
+    color: #ff4d6d;
+    box-shadow: 0 2px 12px #ff4d6d22;
+    transform: translateY(-2px) scale(1.03);
+  }
+`;
+const AccountDropdownIcon = styled.span`
+  font-size: 1.32em;
+  color: #b3b3c6;
+  display: flex;
+  align-items: center;
+  transition: none;
+  margin-right: 12px;
+`;
 
 const CustomLogo = ({ collapsed }) => (
   <LogoWrapper href="/" aria-label="HyperCheckout Home">
-    <LogoCircle>
-      <LogoMain>H</LogoMain>
-    </LogoCircle>
-    {!collapsed && (
-      <>
-        <LogoText>
-          HYP<LogoHighlight>Ξ</LogoHighlight>R
-        </LogoText>
-        <LogoSub>CHECKOUT</LogoSub>
-      </>
-    )}
+    <img
+      src="https://i.imgur.com/1z5yHIU.png"
+      alt="Logo HyperCheckout"
+      style={{ width: 120, height: 120, marginBottom: 18, marginTop: 6, borderRadius: 24 }}
+    />
   </LogoWrapper>
 );
 
@@ -229,9 +297,26 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
   const [showDropdown, setShowDropdown] = useState(false);
   const router = useRouter();
   const active = router.pathname;
-  const user = { name: 'Ulisses ramos', email: 'ulissesramosp@gmail.com' };
+  const [userName, setUserName] = React.useState('');
+  const [userEmail, setUserEmail] = React.useState('');
   const sidebarWidth = collapsed ? 84 : 320;
   const dropdownRef = useRef();
+  const [isClient, setIsClient] = useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  React.useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      let nome = user?.user_metadata?.name;
+      if (!nome) nome = user?.email?.split('@')[0] || 'Usuário';
+      setUserName(nome);
+      setUserEmail(user?.email || '');
+    }
+    fetchUser();
+  }, []);
 
   // Fecha dropdown ao clicar fora
   React.useEffect(() => {
@@ -259,7 +344,7 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
   };
 
   return (
-    <SidebarContainer collapsed={collapsed}>
+    <SidebarContainer>
       <div>
         {/* Logo */}
         <CustomLogo collapsed={collapsed} />
@@ -277,7 +362,6 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
                     onMouseEnter={() => setShowTooltip(item.label)}
                     onMouseLeave={() => setShowTooltip('')}
                     active={isActive}
-                    collapsed={collapsed}
                   >
                     <MenuIcon active={isActive}>{item.icon}</MenuIcon>
                     {!collapsed && item.label}
@@ -309,7 +393,7 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
           </RewardBar>
         )}
         {/* Perfil com dropdown */}
-        {!collapsed && (
+        {!collapsed && isClient && (
           <div style={{ position: 'relative', width: '100%' }} ref={dropdownRef}>
             <button
               style={{
@@ -335,7 +419,7 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <img
-                  src="https://ui-avatars.com/api/?name=Ulisses+ramos&background=23232B&color=ede6fa&size=44&rounded=true"
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=23232B&color=ede6fa&size=44&rounded=true`}
                   alt="Avatar"
                   style={{
                     width: 38,
@@ -348,75 +432,22 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
                   }}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, fontFamily: theme.fonts.body, color: theme.colors.text, lineHeight: 1.1 }}>{user.name}</div>
-                  <div style={{ color: theme.colors.textSecondary, fontSize: 13, fontWeight: 500, fontFamily: theme.fonts.body, marginTop: 2, lineHeight: 1.1 }}>{user.email}</div>
+                  <div style={{ fontWeight: 600, fontSize: 16, fontFamily: theme.fonts.body, color: theme.colors.text, lineHeight: 1.1 }}>{userName}</div>
+                  <div style={{ color: theme.colors.textSecondary, fontSize: 13, fontWeight: 500, fontFamily: theme.fonts.body, marginTop: 2, lineHeight: 1.1 }}>{userEmail}</div>
                 </div>
               </div>
               <FiChevronDown style={{ color: theme.colors.primary, fontSize: 20, marginLeft: 12 }} />
             </button>
             {showDropdown && (
-              <div style={{
-                position: 'absolute',
-                left: 0,
-                bottom: 'calc(100% + 6px)',
-                minWidth: 220,
-                background: '#18181F',
-                border: '1.5px solid #a084ff55',
-                borderRadius: 16,
-                boxShadow: '0 8px 32px 0 #a084ff33',
-                zIndex: 3000,
-                padding: '8px 0',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0,
-                animation: 'fadeInUp .18s',
-              }}>
-                <div style={{
-                  padding: '12px 24px',
-                  color: '#b3b3c6',
-                  fontWeight: 700,
-                  fontSize: 15,
-                  cursor: 'not-allowed',
-                  opacity: 0.7,
-                  borderBottom: '1px solid #23232B',
-                  userSelect: 'none',
-                }}>
-                  Minha Conta
-                </div>
-                <button
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#a084ff',
-                    fontWeight: 700,
-                    fontSize: 16,
-                    padding: '14px 24px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #23232B',
-                    transition: 'background 0.15s',
-                  }}
-                  onClick={() => { router.push('/configuracoes'); setShowDropdown(false); }}
-                >
-                  <FiSettings style={{ marginRight: 10, fontSize: 18, verticalAlign: -2 }} /> Configurações
-                </button>
-                <button
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#ff4d6d',
-                    fontWeight: 700,
-                    fontSize: 16,
-                    padding: '14px 24px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s',
-                  }}
-                  onClick={handleLogout}
-                >
-                  <span style={{ marginRight: 10, fontSize: 18, verticalAlign: -2, display: 'inline-block' }}>↗</span> Sair
-                </button>
-              </div>
+              <AccountDropdown>
+                <AccountDropdownTitle>Minha Conta</AccountDropdownTitle>
+                <AccountDropdownButton onClick={() => { router.push('/configuracoes'); setShowDropdown(false); }}>
+                  <AccountDropdownIcon><FiSettings /></AccountDropdownIcon>Configurações
+                </AccountDropdownButton>
+                <AccountDropdownButtonDanger onClick={handleLogout}>
+                  <AccountDropdownIcon style={{ color: '#ff4d6d' }}>↗</AccountDropdownIcon>Sair
+                </AccountDropdownButtonDanger>
+              </AccountDropdown>
             )}
           </div>
         )}
@@ -454,8 +485,8 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
             >
               <h2 style={{ margin: 0, marginBottom: 24, color: '#5a0fd6', fontWeight: 900 }}>Configurações</h2>
               <div style={{ marginBottom: 24, textAlign: 'center' }}>
-                <div style={{ fontWeight: 700, fontSize: 18 }}>{user.name}</div>
-                <div style={{ color: '#B3B3C6', fontSize: 15 }}>{user.email}</div>
+                <div style={{ fontWeight: 700, fontSize: 18 }}>{userName}</div>
+                <div style={{ color: '#B3B3C6', fontSize: 15 }}>{userEmail}</div>
               </div>
               <button
                 style={{
@@ -484,23 +515,6 @@ export default function Sidebar({ collapsed: collapsedProp = false, onCollapse }
           {!collapsed && 'Modo Escuro'}
         </button>
       </Footer>
-      {/* Responsividade: esconder sidebar em telas muito pequenas */}
-      <style jsx>{`
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-        @media (max-width: 700px) {
-          aside {
-            width: ${collapsed ? 0 : sidebarWidth}px !important;
-            min-width: 0 !important;
-            max-width: 100vw !important;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            transition: width 0.35s cubic-bezier(.77,0,.18,1);
-          }
-        }
-      `}</style>
     </SidebarContainer>
   );
 } 

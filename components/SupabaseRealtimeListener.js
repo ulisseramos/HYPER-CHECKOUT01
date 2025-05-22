@@ -45,7 +45,7 @@ export default function SupabaseRealtimeListener() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'transactions' }, payload => {
         console.log('[Realtime] Novo INSERT em transactions:', payload);
         const status = (payload.new.status || '').toLowerCase();
-        const valor = payload.new.amount || '';
+        const valor = payload.new.amount ?? payload.new.value ?? '';
         if (status === 'aprovado' || status === 'approved' || status === 'paid') {
           showToast({
             title: 'Venda aprovada!',
@@ -79,6 +79,10 @@ export default function SupabaseRealtimeListener() {
             date: new Date(),
           });
         }
+        // Disparar evento global para atualização automática do painel
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('supabase:realtime'));
+        }
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'transactions' }, payload => {
         console.log('[Realtime] UPDATE em transactions:', payload);
@@ -109,6 +113,10 @@ export default function SupabaseRealtimeListener() {
             });
             notifyNative('Venda Pendente!', `Valor: R$ ${valor}`);
           }
+        }
+        // Disparar evento global para atualização automática do painel
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('supabase:realtime'));
         }
       })
       .subscribe();

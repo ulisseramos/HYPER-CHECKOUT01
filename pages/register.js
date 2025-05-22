@@ -13,7 +13,7 @@ const LogoWrapper = styled.a`
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  padding: 12px 0 18px 0;
+  padding: 8px 0 18px 0;
   width: 100%;
 `;
 const LogoCircle = styled.div`
@@ -65,13 +65,12 @@ const Bg = styled.div`
   justify-content: center;
 `;
 const Card = styled.div`
-  background: #101014;
-  border-radius: 22px;
-  border: 1.5px solid rgba(90,15,214,0.18);
-  box-shadow: 0 8px 40px 0 #5a0fd62a, 0 1.5px 16px #0008 inset;
-  backdrop-filter: blur(14px);
-  padding: 64px 48px 48px 48px;
-  max-width: 520px;
+  background: #131316;
+  border-radius: 18px;
+  border: 1.5px solid #23232b;
+  box-shadow: 0 4px 32px 0 #0006;
+  padding: 48px 32px 36px 32px;
+  max-width: 480px;
   width: 100%;
   color: #ede6fa;
   display: flex;
@@ -80,36 +79,38 @@ const Card = styled.div`
   box-sizing: border-box;
   position: relative;
   z-index: 2;
-  @media (max-width: 500px) {
-    padding: 36px 10px 28px 10px;
+  @media (max-width: 600px) {
+    padding: 16px 3vw 12px 3vw;
+    max-width: 98vw;
+  }
+  @media (max-width: 480px) {
+    padding: 10px 6vw 10px 6vw;
+    max-width: 98vw;
   }
 `;
 const Title = styled.h2`
   font-family: 'Poppins', Arial, sans-serif;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 900;
   color: #ede6fa;
   margin-bottom: 6px;
-  letter-spacing: -2px;
   text-align: center;
   line-height: 1.1;
-  span {
-    color: #ede6fa;
-    background: none;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: unset;
-    background-clip: unset;
-    text-fill-color: unset;
-    filter: none;
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
   }
 `;
 const Subtitle = styled.div`
   font-family: 'Inter', Arial, sans-serif;
   font-size: 1.05rem;
   color: #b3b3c6;
-  margin-bottom: 26px;
+  margin-bottom: 22px;
   text-align: center;
   font-weight: 500;
+  @media (max-width: 480px) {
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+  }
 `;
 const Form = styled.form`
   width: 100%;
@@ -124,10 +125,9 @@ const Label = styled.label`
   font-size: 0.97rem;
   font-family: 'Poppins', Arial, sans-serif;
   font-weight: 700;
-  color: #5a0fd6;
+  color: #b3b3c6;
   margin-bottom: 4px;
   gap: 5px;
-  letter-spacing: -0.5px;
 `;
 const InputGroup = styled.div`
   width: 100%;
@@ -140,9 +140,9 @@ const InputWrapper = styled.div`
 const Input = styled.input`
   width: 100%;
   box-sizing: border-box;
-  padding: 15px 44px 15px 40px;
-  background: rgba(20, 20, 26, 0.92);
-  border: 1.5px solid #23232B;
+  padding: 13px 44px 13px 40px;
+  background: #18181f;
+  border: 1.5px solid #23232b;
   border-radius: 10px;
   color: #ede6fa;
   font-size: 1.07rem;
@@ -153,15 +153,19 @@ const Input = styled.input`
   &::placeholder {
     color: #b3b3c6;
     opacity: 1;
-    font-style: italic;
     font-size: 0.98rem;
     font-family: 'Inter', Arial, sans-serif;
     font-weight: 400;
+    font-style: normal;
   }
   &:focus {
-    border: 1.5px solid #5a0fd6;
-    background: rgba(20, 20, 26, 0.99);
-    box-shadow: 0 0 8px #5a0fd6aa;
+    border: 1.5px solid #ede6fa;
+    background: #18181f;
+    box-shadow: 0 0 0 1.5px #ede6fa22;
+  }
+  @media (max-width: 480px) {
+    font-size: 0.98rem;
+    padding: 11px 38px 11px 36px;
   }
 `;
 const InputIcon = styled.span`
@@ -169,7 +173,7 @@ const InputIcon = styled.span`
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #5a0fd6;
+  color: #b3b3c6;
   font-size: 1.18rem;
 `;
 const EyeIcon = styled.span`
@@ -177,7 +181,7 @@ const EyeIcon = styled.span`
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #5a0fd6;
+  color: #b3b3c6;
   font-size: 1.18rem;
   cursor: pointer;
 `;
@@ -192,48 +196,51 @@ const ErrorMsg = styled.div`
 `;
 const Button = styled.button`
   width: 100%;
-  padding: 17px 0;
-  background: linear-gradient(180deg, #5a0fd6 0%, #6d28d9 100%);
-  color: #fff;
+  padding: 15px 0;
+  background: #23232b;
+  color: #ede6fa;
   border: none;
   border-radius: 10px;
-  font-size: 1.18rem;
+  font-size: 1.13rem;
   font-family: 'Poppins', Arial, sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.2px;
+  font-weight: 700;
   margin-top: 10px;
-  box-shadow: 0 0 18px #5a0fd62a;
+  box-shadow: 0 0 12px #0002;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
   svg { font-size: 1.18em; }
   &:hover {
-    background: linear-gradient(180deg, #6d28d9 0%, #5a0fd6 100%);
-    box-shadow: 0 0 28px #5a0fd655;
-    transform: translateY(-2px) scale(1.03);
+    background: #18181f;
+    color: #ede6fa;
+    box-shadow: 0 2px 16px #23232b;
+  }
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    padding: 12px 0;
   }
 `;
 const LoginLink = styled.div`
-  margin-top: 22px;
+  margin-top: 18px;
   color: #b3b3c6;
   font-size: 1rem;
   text-align: center;
   font-family: 'Inter', Arial, sans-serif;
   a {
-    color: #5a0fd6;
+    color: #ede6fa;
     font-family: 'Poppins', Arial, sans-serif;
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 3px;
     margin-left: 4px;
-    transition: color 0.18s, text-decoration-color 0.18s;
-    text-decoration-color: #5a0fd6;
+    transition: color 0.18s;
+    text-decoration-color: #ede6fa;
     &:hover {
-      color: #00e6ff;
-      text-decoration-color: #00e6ff;
+      color: #fff;
+      text-decoration-color: #fff;
     }
   }
 `;
@@ -247,6 +254,7 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
   const router = useRouter();
 
   const handleRegister = async (e) => {
@@ -278,20 +286,8 @@ export default function Register() {
       setError(error.message);
       setLoading(false);
     } else {
-      toast.success('Cadastro realizado com sucesso! Faça login para continuar.', {
-        position: 'top-right',
-        autoClose: 3200,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        style: { fontWeight: 700, fontSize: 17, borderRadius: 12, background: '#18181F', color: '#a084ff', boxShadow: '0 2px 16px #5a0fd633' },
-      });
-      setTimeout(() => {
-        setLoading(false);
-        router.replace('/login');
-      }, 3500);
+      setSuccessMsg(`Parabéns, ${name.split(' ')[0]}! Sua conta foi criada com sucesso. Faça login para continuar.`);
+      setLoading(false);
     }
   };
 
@@ -301,21 +297,53 @@ export default function Register() {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
         <title>Crie sua Conta | Hypercheckout</title>
       </Head>
+      {successMsg && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(20,20,26,0.92)',
+          zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 0, margin: 0
+        }}>
+          <div style={{
+            background: '#18181f',
+            borderRadius: 18,
+            boxShadow: '0 4px 32px #0008',
+            border: '1.5px solid #23232b',
+            padding: '36px 24px',
+            maxWidth: 340,
+            width: '90vw',
+            color: '#ede6fa',
+            textAlign: 'center',
+            fontFamily: 'Poppins, Arial, sans-serif',
+            fontWeight: 700,
+            fontSize: 20,
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: 18
+          }}>
+            <span role="img" aria-label="Sucesso" style={{ fontSize: 38, marginBottom: 10 }}>🎉</span>
+            <div style={{ marginBottom: 18 }}>{successMsg}</div>
+            <button onClick={() => { setSuccessMsg(''); router.replace('/login'); }} style={{
+              background: '#23232b', color: '#ede6fa', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 16, padding: '12px 28px', cursor: 'pointer', marginTop: 8, boxShadow: '0 2px 12px #0003', transition: 'background 0.18s, color 0.18s' }}>OK, fazer login</button>
+          </div>
+        </div>
+      )}
       <Bg>
         <Card>
           <LogoWrapper href="/" aria-label="HyperCheckout Home">
-            <LogoCircle>
-              <LogoMain>H</LogoMain>
-            </LogoCircle>
-            <LogoText>
-              HYP<LogoHighlight>Ξ</LogoHighlight>R
-            </LogoText>
-            <LogoSub>CHECKOUT</LogoSub>
+            <img
+              src="https://i.imgur.com/1z5yHIU.png"
+              alt="Logo HyperCheckout"
+              style={{ width: 120, height: 120, marginBottom: 18, marginTop: 6, borderRadius: 24 }}
+            />
           </LogoWrapper>
-          <Title>
-            Crie sua <span>Conta</span>
+          <Title style={{ fontFamily: 'Inter, Arial, sans-serif', fontWeight: 700, fontSize: '1.5rem', color: '#fff', marginBottom: 8, letterSpacing: 0 }}>
+            Crie sua Conta
           </Title>
-          <Subtitle>Preencha os campos para se cadastrar.</Subtitle>
+          <Subtitle style={{ fontFamily: 'Inter, Arial, sans-serif', fontWeight: 400, color: '#b3b3c6', fontSize: '1.05rem', marginBottom: 24 }}>
+            Preencha os campos para se cadastrar.
+          </Subtitle>
           <Form onSubmit={handleRegister} autoComplete="off">
             <InputGroup>
               <Label htmlFor="name"><FiUser /> Nome completo</Label>
@@ -392,9 +420,8 @@ export default function Register() {
               ) : (<><FiLogIn /> Cadastrar</>)}
             </Button>
           </Form>
-          <LoginLink>
-            Já tem uma conta?
-            <a href="/login">Entrar</a>
+          <LoginLink style={{ color: '#b3b3c6', fontFamily: 'Inter, Arial, sans-serif', fontWeight: 400, marginTop: 18 }}>
+            Já tem uma conta? <a href="/login" style={{ color: '#ede6fa', textDecoration: 'underline', fontWeight: 500 }}>Entrar</a>
           </LoginLink>
         </Card>
       </Bg>

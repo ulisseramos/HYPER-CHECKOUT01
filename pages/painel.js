@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import styled from 'styled-components';
 import { Line, Bar } from 'react-chartjs-2';
@@ -13,9 +13,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { FiDollarSign, FiCalendar, FiCreditCard, FiGrid, FiFileText, FiActivity, FiZap, FiBell, FiX } from 'react-icons/fi';
+import { FiDollarSign, FiCalendar, FiCreditCard, FiGrid, FiFileText, FiActivity, FiZap, FiBell, FiX, FiClock, FiCheckCircle } from 'react-icons/fi';
 import { useSidebar } from '../components/SidebarContext';
 import { keyframes } from 'styled-components';
+import { supabase } from '../lib/supabaseClient';
 
 ChartJS.register(
   CategoryScale,
@@ -40,7 +41,7 @@ const Container = styled.div`
 
 const Main = styled.main`
   margin-left: ${props => props.marginLeft || 320}px;
-  padding: 0 48px 40px 48px;
+  padding: 0 18px 24px 18px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -49,7 +50,7 @@ const Main = styled.main`
   transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
   @media (max-width: 900px) {
     margin-left: 0;
-    padding: 0 8px 40px 8px;
+    padding: 0 4px 18px 4px;
   }
 `;
 
@@ -80,25 +81,26 @@ const WelcomeHeader = styled.div`
 `;
 
 const DashboardTitle = styled.div`
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 900;
   margin-bottom: 0;
   background: linear-gradient(90deg, #a084ff 0%, #5a0fd6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   max-width: 100%;
   word-break: break-word;
   overflow-wrap: anywhere;
+  line-height: 1.2;
 `;
 const WelcomeTitle = styled.h2`
-  font-size: 2.1rem;
+  font-size: 2rem;
   font-weight: 900;
   margin: 0;
-  letter-spacing: -1.2px;
-  line-height: 1.08;
+  letter-spacing: -1px;
+  line-height: 1.13;
   display: inline-block;
   background: linear-gradient(90deg, #fff 0%, #a084ff 100%);
   -webkit-background-clip: text;
@@ -107,6 +109,7 @@ const WelcomeTitle = styled.h2`
   max-width: 100%;
   word-break: break-word;
   overflow-wrap: anywhere;
+  margin-bottom: 2px;
   @media (max-width: 700px) {
     font-size: 1.3rem;
   }
@@ -118,13 +121,14 @@ const WelcomeHighlight = styled.span`
 `;
 const WelcomeSub = styled.div`
   color: #bcb8d0;
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-size: 1.08rem;
+  font-weight: 600;
   margin: 0;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   max-width: 100%;
   word-break: break-word;
   overflow-wrap: anywhere;
+  line-height: 1.18;
   @media (max-width: 700px) {
     font-size: 0.95rem;
   }
@@ -132,88 +136,70 @@ const WelcomeSub = styled.div`
 
 const CardsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
   margin-top: 0;
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
   }
 `;
 const Card = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
   background: #101014;
-  border-radius: 16px;
-  border: 1.2px solid #23232b;
+  border-radius: 18px;
+  border: none;
   box-shadow: none;
-  padding: 28px 36px 24px 36px;
-  min-height: 110px;
+  padding: 28px 36px;
+  min-height: 72px;
+  gap: 18px;
+  margin-bottom: 0;
+  transition: box-shadow 0.22s, border 0.18s, transform 0.16s cubic-bezier(0.4,0.2,0.2,1);
+  will-change: transform, box-shadow, border;
   position: relative;
   overflow: hidden;
 `;
-const CardIconGlass = styled.div`
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: #18181f;
+const CardTitle = styled.div`
+  color: #b3b3c6;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const CardValue = styled.div`
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #fff 0%, #b3b3c6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.7px;
+`;
+const CardSub = styled.div`
+  color: #b3b3c6;
+  font-size: 0.92rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+const CardIcon = styled.div`
+  font-size: 1.8rem;
+  color: #5a0fd6;
+  background: rgba(90, 15, 214, 0.1);
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.2px solid #23232b;
-  position: absolute;
-  top: 18px;
-  left: 24px;
-`;
-const CardInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0;
-  padding-left: 64px;
-  padding-top: 2px;
-`;
-const CardTitle = styled.div`
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: 0.98rem;
-  font-weight: 600;
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-const CardValue = styled.div`
-  font-size: 1.45rem;
-  font-weight: 900;
-  color: ${({ theme }) => theme.colors.text};
-  letter-spacing: 0.7px;
-`;
-const CardDetailsLink = styled.a`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: 0.98rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  padding-bottom: 2px;
-  transition: color 0.18s;
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #a084ff 0%, #5a0fd6 100%);
-    border-radius: 2px;
-    transform: scaleX(0);
-    transition: transform 0.22s cubic-bezier(0.4,0.2,0.2,1);
-    transform-origin: left;
-  }
-  &:hover {
-    color: #fff;
-    &::after { transform: scaleX(1); }
+  transition: all 0.3s ease;
+
+  ${Card}:hover & {
+    transform: scale(1.1);
+    background: rgba(90, 15, 214, 0.15);
   }
 `;
 
@@ -235,7 +221,7 @@ const ChartCard = styled.div`
   }
 `;
 const ChartTitleStyled = styled.div`
-  color: ${({ theme }) => theme.colors.text};
+  color: #fff;
   font-size: 1.25rem;
   font-weight: 900;
   margin-bottom: 2px;
@@ -415,28 +401,6 @@ const paymentMethods = [
   },
 ];
 
-const cardsData = [
-  {
-    id: 'vendas_hoje',
-    title: 'Total em Vendas hoje',
-    value: 'R$ 0,00',
-    icon: <FiDollarSign />,
-  },
-  {
-    id: 'vendas_mes',
-    title: 'Total em Vendas este mês',
-    value: 'R$ 0,00',
-    icon: <FiCalendar />,
-  },
-  {
-    id: 'saldo',
-    title: 'Saldo disponível',
-    value: 'R$ 0,00',
-    icon: <FiCreditCard />,
-    details: true,
-  },
-];
-
 const FadeIn = styled.div`
   animation: fadeInUp 0.8s cubic-bezier(0.4,0.2,0.2,1);
   @keyframes fadeInUp {
@@ -492,49 +456,50 @@ const MetaProgress = styled.div`
 
 const NotificationBell = styled.div`
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: 38px;
+  right: 38px;
   z-index: 2000;
   cursor: pointer;
   background: #101014;
-  border: 1.5px solid #2d1a4d;
-  border-radius: 16px;
-  width: 44px;
-  height: 44px;
+  border: 2.5px solid #a084ff;
+  border-radius: 18px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border 0.18s, background 0.18s;
+  box-shadow: 0 0 0 2px #a084ff33, 0 4px 18px #0005;
+  transition: border 0.18s, background 0.18s, box-shadow 0.18s;
   &:hover {
-    border: 1.5px solid #a084ff;
+    border: 2.5px solid #a084ff;
     background: #18181f;
+    box-shadow: 0 0 0 6px #a084ff22, 0 6px 24px #0007;
   }
 `;
 const BellIcon = styled.div`
   position: relative;
-  font-size: 1.85rem;
-  color: #a084ff;
+  font-size: 2.2rem;
+  color: #b3b3c6;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 const BellBadge = styled.span`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -4px;
+  right: -4px;
   background: #ff4d6d;
   color: #fff;
-  font-size: 0.62rem;
-  font-weight: 500;
+  font-size: 0.82rem;
+  font-weight: 700;
   border-radius: 50%;
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
+  box-shadow: 0 2px 8px #ff4d6d55;
   pointer-events: none;
-  animation: ${pulseAnim} 1.2s infinite;
 `;
 const pulseAnim = keyframes`
   0% { box-shadow: 0 0 0 0 #ff4d6d55; }
@@ -614,6 +579,17 @@ const NotifMeta = styled.div`
   gap: 8px;
 `;
 
+const CardIconSquare = styled.div`
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #18181f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+`;
+
 export default function Painel() {
   const { collapsed, setCollapsed } = useSidebar();
   const sidebarWidth = collapsed ? 84 : 320;
@@ -624,6 +600,158 @@ export default function Painel() {
     { id: 2, msg: 'Pagamento aprovado!', type: 'Pagamento', date: new Date(Date.now() - 3600 * 1000), unread: true },
     { id: 3, msg: 'Checkout criado com sucesso.', type: 'Checkout', date: new Date(Date.now() - 2 * 3600 * 1000), unread: false },
   ]);
+  const [userName, setUserName] = React.useState('');
+  const [transactions, setTransactions] = useState([]);
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [periodo, setPeriodo] = useState('7dias');
+  const [produtoFiltro, setProdutoFiltro] = useState('');
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      let nome = user?.user_metadata?.name;
+      if (!nome) nome = user?.email?.split('@')[0] || 'Usuário';
+      setUserName(nome);
+    }
+    fetchUser();
+  }, []);
+
+  // Função única para buscar os dados reais
+  async function atualizarPainel() {
+    setLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setLoading(false);
+      return;
+    }
+    const userId = session.user.id;
+    const { data: prods } = await supabase.from('products').select('*').eq('user_id', userId);
+    setProdutos(prods || []);
+    let from = supabase.from('transactions').select('*').eq('user_id', userId);
+    const now = new Date();
+    let dataLimite = null;
+    if (periodo === '7dias') {
+      dataLimite = new Date();
+      dataLimite.setDate(now.getDate() - 6);
+      from = from.gte('created_at', dataLimite.toISOString());
+    } else if (periodo === 'hoje') {
+      dataLimite = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      from = from.gte('created_at', dataLimite.toISOString());
+    } else if (periodo === 'ontem') {
+      const ontem = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      const hoje = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      from = from.gte('created_at', ontem.toISOString()).lt('created_at', hoje.toISOString());
+    } else if (periodo === '30dias') {
+      dataLimite = new Date();
+      dataLimite.setDate(now.getDate() - 29);
+      from = from.gte('created_at', dataLimite.toISOString());
+    } else if (periodo === 'mes') {
+      dataLimite = new Date(now.getFullYear(), now.getMonth(), 1);
+      from = from.gte('created_at', dataLimite.toISOString());
+    } else if (periodo === 'mespassado') {
+      const primeiroMesPassado = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const primeiroMesAtual = new Date(now.getFullYear(), now.getMonth(), 1);
+      from = from.gte('created_at', primeiroMesPassado.toISOString()).lt('created_at', primeiroMesAtual.toISOString());
+    }
+    if (produtoFiltro && produtoFiltro !== '') {
+      from = from.eq('product_id', produtoFiltro);
+    }
+    const { data: trans } = await from;
+    setTransactions(trans || []);
+    setLoading(false);
+  }
+
+  // Atualiza ao mudar período/produto
+  useEffect(() => {
+    atualizarPainel();
+    // eslint-disable-next-line
+  }, [periodo, produtoFiltro]);
+
+  // Atualização automática via evento do SupabaseRealtimeListener
+  useEffect(() => {
+    function handleRealtimeEvent() {
+      atualizarPainel();
+    }
+    window.addEventListener('supabase:realtime', handleRealtimeEvent);
+    return () => {
+      window.removeEventListener('supabase:realtime', handleRealtimeEvent);
+    };
+  }, [periodo, produtoFiltro]);
+
+  // Use amount ou value para garantir compatibilidade
+  const getValor = t => Number(t.amount ?? t.value ?? 0);
+
+  const totalVendas = transactions.reduce((acc, t) => acc + getValor(t), 0);
+  const vendasAprovadas = transactions.filter(t => (t.status || '').toLowerCase().includes('apro'));
+  const vendasPendentes = transactions.filter(t => (t.status || '').toLowerCase().includes('pend'));
+  const totalAprovadas = vendasAprovadas.reduce((acc, t) => acc + getValor(t), 0);
+  const totalPendentes = vendasPendentes.reduce((acc, t) => acc + getValor(t), 0);
+
+  const vendasPorProduto = produtos.map(prod => ({
+    ...prod,
+    vendas: transactions.filter(t => t.product_id === prod.id),
+    total: transactions.filter(t => t.product_id === prod.id).reduce((acc, t) => acc + getValor(t), 0)
+  }));
+
+  const dias = [...Array(7)].map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toLocaleDateString('pt-BR');
+  });
+  const vendasPorDia = dias.map(dia => {
+    return transactions
+      .filter(t => new Date(t.created_at).toLocaleDateString('pt-BR') === dia)
+      .reduce((acc, t) => acc + getValor(t), 0);
+  });
+  const lineData = {
+    labels: dias,
+    datasets: [
+      {
+        label: 'Vendas',
+        data: vendasPorDia,
+        borderColor: '#ede6fa',
+        pointBackgroundColor: '#fff',
+        pointBorderColor: '#ede6fa',
+        pointRadius: 7,
+        pointHoverRadius: 11,
+        pointBorderWidth: 3,
+        borderWidth: 4,
+        tension: 0.55,
+        fill: false,
+        backgroundColor: '#101014',
+      },
+    ],
+  };
+
+  const cardsData = [
+    {
+      id: 'vendas_hoje',
+      title: 'Total em Vendas',
+      value: `R$ ${totalVendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
+      icon: <FiDollarSign />,
+    },
+    {
+      id: 'vendas_mes',
+      title: 'Vendas Aprovadas',
+      value: `R$ ${totalAprovadas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
+      icon: <FiCreditCard />,
+    },
+    {
+      id: 'pendentes',
+      title: 'Vendas Pendentes',
+      value: `R$ ${totalPendentes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
+      icon: <FiClock />,
+      details: true,
+    },
+    {
+      id: 'produtos',
+      title: 'Produtos Vendidos',
+      value: `${vendasPorProduto.filter(p => p.total > 0).length}`,
+      icon: <FiGrid />,
+    },
+  ];
+
   React.useEffect(() => {
     function handleClickOutside(e) {
       if (showNotif) setShowNotif(false);
@@ -648,45 +776,14 @@ export default function Painel() {
     setNotifs(n => n.map(nf => ({ ...nf, unread: false })));
   }
 
-  // Função para criar gradiente roxo no gráfico de linha (área preenchida, mais bonito)
   const getGradient = (ctx, chartArea) => {
     const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.55)'); // Roxo mais forte no topo
+    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.55)');
     gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.18)');
-    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.01)'); // Quase transparente na base
+    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.01)');
     return gradient;
   };
 
-  // Novo lineData com visual roxo
-  const lineData = {
-    labels: ['05/mai', '06/mai', '07/mai', '08/mai', '09/mai', '10/mai', '11/mai'],
-    datasets: [
-      {
-        label: 'Vendas',
-        data: [3400, 3200, 3100, 3600, 3150, 3250, 3850],
-        borderColor: '#7c3aed',
-        pointBackgroundColor: '#fff',
-        pointBorderColor: '#7c3aed',
-        pointRadius: 7,
-        pointHoverRadius: 10,
-        borderWidth: 4,
-        tension: 0.45,
-        fill: true,
-        backgroundColor: function(context) {
-          const chart = context.chart;
-          const {ctx, chartArea} = chart;
-          if (!chartArea) return null;
-          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          gradient.addColorStop(0, 'rgba(124, 58, 237, 0.7)'); // Roxo sólido no topo
-          gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.35)'); // Roxo médio no meio
-          gradient.addColorStop(1, 'rgba(124, 58, 237, 0.18)'); // Roxo translúcido na base
-          return gradient;
-        },
-      },
-    ],
-  };
-
-  // Exemplo de valores (pode ser dinâmico depois)
   const metaAtual = 0;
   const metaTotal = 10000;
   const metaPercent = Math.round((metaAtual / metaTotal) * 100);
@@ -730,70 +827,68 @@ export default function Painel() {
         <WelcomeHeader>
           <DashboardTitle>Dashboard</DashboardTitle>
           <WelcomeTitle>
-            Bem vindo(a) de volta, <WelcomeHighlight>Ulisses!</WelcomeHighlight>
+            Bem vindo(a) de volta, <WelcomeHighlight>{userName}!</WelcomeHighlight>
           </WelcomeTitle>
           <WelcomeSub>Acompanhe o resumo que fizemos para você.</WelcomeSub>
         </WelcomeHeader>
         <div style={{ height: 18 }} />
-        {/* Filtros de Produtos e Período */}
         <div style={{ display: 'flex', gap: 18, marginBottom: 28, alignItems: 'flex-end', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
-            <label htmlFor="filtro-produto" style={{ color: '#b3b3c6', fontSize: 13, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Produtos</label>
+            <label htmlFor="filtro-produto" style={{ color: '#b3b3c6', fontSize: 14, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Produtos</label>
             <div style={{ position: 'relative' }}>
               <select id="filtro-produto" style={{
                 width: '100%',
-                background: 'linear-gradient(90deg, #18181F 60%, #23232B 100%)',
+                background: '#101014',
                 color: '#ede6fa',
-                border: '1.7px solid #2d1a4d',
-                borderRadius: 14,
-                padding: '16px 44px 16px 18px',
-                fontSize: 16,
+                border: '1.2px solid #23232B',
+                borderRadius: 16,
+                padding: '14px 44px 14px 18px',
+                fontSize: 15,
                 outline: 'none',
                 marginBottom: 0,
-                boxShadow: '0 2px 12px #7c3aed18',
+                boxShadow: '0 2px 12px #0006',
                 fontWeight: 600,
                 appearance: 'none',
                 WebkitAppearance: 'none',
                 MozAppearance: 'none',
                 transition: 'border 0.18s, box-shadow 0.18s',
               }}
-                onFocus={e => e.target.style.border = '1.7px solid #7c3aed'}
-                onBlur={e => e.target.style.border = '1.7px solid #2d1a4d'}
+                onFocus={e => e.target.style.border = '1.2px solid #b3b3c6'}
+                onBlur={e => e.target.style.border = '1.2px solid #23232B'}
               >
                 <option>Produtos</option>
                 <option>Produto 1</option>
                 <option>Produto 2</option>
               </select>
-              {/* Ícone seta custom */}
               <span style={{ position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9L11 14L16 9" stroke="#a084ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 9L11 14L16 9" stroke="#b3b3c6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </span>
             </div>
           </div>
           <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
-            <label htmlFor="filtro-periodo" style={{ color: '#b3b3c6', fontSize: 13, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Período</label>
+            <label htmlFor="filtro-periodo" style={{ color: '#b3b3c6', fontSize: 14, marginLeft: 4, marginBottom: 6, display: 'block', fontWeight: 700, letterSpacing: 0.2 }}>Período</label>
             <div style={{ position: 'relative' }}>
               <select id="filtro-periodo" style={{
                 width: '100%',
-                background: 'linear-gradient(90deg, #18181F 60%, #23232B 100%)',
+                background: '#101014',
                 color: '#ede6fa',
-                border: '1.7px solid #2d1a4d',
-                borderRadius: 14,
-                padding: '16px 44px 16px 18px',
-                fontSize: 16,
+                border: '1.2px solid #23232B',
+                borderRadius: 16,
+                padding: '14px 44px 14px 18px',
+                fontSize: 15,
                 outline: 'none',
                 marginBottom: 0,
-                boxShadow: '0 2px 12px #7c3aed18',
+                boxShadow: '0 2px 12px #0006',
                 fontWeight: 600,
                 appearance: 'none',
                 WebkitAppearance: 'none',
                 MozAppearance: 'none',
                 transition: 'border 0.18s, box-shadow 0.18s',
               }}
-                onFocus={e => e.target.style.border = '1.7px solid #7c3aed'}
-                onBlur={e => e.target.style.border = '1.7px solid #2d1a4d'}
+                onFocus={e => e.target.style.border = '1.2px solid #b3b3c6'}
+                onBlur={e => e.target.style.border = '1.2px solid #23232B'}
               >
                 <option>Últimos 7 dias</option>
                 <option>Hoje</option>
@@ -802,10 +897,9 @@ export default function Painel() {
                 <option>Este mês</option>
                 <option>Mês passado</option>
               </select>
-              {/* Ícone seta custom */}
               <span style={{ position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9L11 14L16 9" stroke="#a084ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 9L11 14L16 9" stroke="#b3b3c6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </span>
             </div>
@@ -816,16 +910,15 @@ export default function Painel() {
             <CardsGrid>
               {cardsData.map((card, i) => (
                 <Card key={i}>
-                  <CardInfo>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0, paddingTop: 2 }}>
                     <CardTitle>
-                      <CardIconGlass>
-                        {card.icon && React.cloneElement(card.icon, { size: 26, color: '#b3b3c6' })}
-                      </CardIconGlass>
+                      <CardIconSquare>
+                        {card.icon && React.cloneElement(card.icon, { size: 22, color: '#b3b3c6' })}
+                      </CardIconSquare>
                       {card.title}
                     </CardTitle>
                     <CardValue>{card.value}</CardValue>
-                  </CardInfo>
-                  {card.details && <CardDetailsLink href="#">Ver detalhes</CardDetailsLink>}
+                  </div>
                 </Card>
               ))}
             </CardsGrid>
@@ -851,28 +944,31 @@ export default function Painel() {
                         line: {
                           borderJoinStyle: 'round',
                           borderCapStyle: 'round',
-                          shadowColor: '#7c3aed',
-                          shadowBlur: 12,
+                          borderWidth: 4,
+                          shadowColor: '#ede6fa',
+                          shadowBlur: 0,
                         },
                         point: {
-                          radius: 5,
-                          backgroundColor: '#a084ff',
-                          borderColor: '#fff',
-                          borderWidth: 2,
-                          hoverRadius: 8,
-                          hoverBackgroundColor: '#fff',
-                          hoverBorderColor: '#7c3aed',
-                          hoverBorderWidth: 2,
+                          radius: 7,
+                          backgroundColor: '#fff',
+                          borderColor: '#ede6fa',
+                          borderWidth: 3,
+                          hoverRadius: 11,
+                          hoverBackgroundColor: '#ede6fa',
+                          hoverBorderColor: '#fff',
+                          hoverBorderWidth: 3,
+                          shadowColor: '#000',
+                          shadowBlur: 8,
                         },
                       },
                       scales: {
                         x: {
-                          grid: { color: 'rgba(124, 58, 237, 0.10)' },
-                          ticks: { color: '#a084ff', font: { family: 'Inter' } },
+                          grid: { color: '#23232b' },
+                          ticks: { color: '#ede6fa', font: { family: 'Inter' } },
                         },
                         y: {
-                          grid: { color: 'rgba(124, 58, 237, 0.10)' },
-                          ticks: { color: '#a084ff', font: { family: 'Inter' } },
+                          grid: { color: '#23232b' },
+                          ticks: { color: '#ede6fa', font: { family: 'Inter' } },
                           beginAtZero: false,
                         },
                       },

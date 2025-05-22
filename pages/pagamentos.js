@@ -97,35 +97,16 @@ const Card = styled.div`
   justify-content: space-between;
   background: #101014;
   border-radius: 18px;
-  box-shadow: 0 4px 24px 0 #7c3aed22, 0 1.5px 8px #0006 inset;
   border: none;
+  box-shadow: none;
   padding: 28px 36px;
   min-height: 72px;
   gap: 18px;
   margin-bottom: 0;
   transition: box-shadow 0.22s, border 0.18s, transform 0.16s cubic-bezier(0.4,0.2,0.2,1);
   will-change: transform, box-shadow, border;
-  backdrop-filter: blur(16px);
   position: relative;
   overflow: hidden;
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 7px;
-    height: 100%;
-    border-radius: 18px 0 0 18px;
-    background: linear-gradient(180deg, #4b267a 0%, #2a0a4d 100%);
-    box-shadow: 0 0 10px 1px #4b267a55;
-    z-index: 2;
-    opacity: 0.98;
-  }
-  &:hover {
-    box-shadow: 0 8px 32px #7c3aed44, 0 2px 12px #4b267a55 inset;
-    border: none;
-    transform: scale(1.012) translateY(-2px);
-  }
 `;
 
 const CardInfo = styled.div`
@@ -138,6 +119,9 @@ const CardTitle = styled.div`
   color: #b3b3c6;
   font-size: 1rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
 const CardValue = styled.div`
@@ -180,29 +164,27 @@ const FiltersBar = styled.div`
   align-items: center;
   gap: 16px;
   background: #101014;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  padding: 16px 24px;
+  border-radius: 14px;
+  border: 1px solid #23232b;
+  padding: 14px 20px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  box-shadow: none;
 `;
 
 const SearchInput = styled.input`
-  background: rgba(20, 20, 26, 0.8);
-  border: 1px solid rgba(90, 15, 214, 0.3);
+  background: #18181f;
+  border: 1px solid #23232b;
   color: #fff;
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 1rem;
   outline: none;
-  width: 240px;
-  transition: all 0.3s ease;
+  width: 220px;
+  transition: border 0.2s;
 
   &:focus {
-    border-color: #5a0fd6;
-    box-shadow: 0 0 0 2px rgba(90, 15, 214, 0.2);
+    border-color: #fff;
   }
 
   &::placeholder {
@@ -211,118 +193,110 @@ const SearchInput = styled.input`
 `;
 
 const Select = styled.select`
-  background: rgba(20, 20, 26, 0.8);
-  border: 1px solid rgba(90, 15, 214, 0.3);
+  background: #18181f;
+  border: 1px solid #23232b;
   color: #fff;
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 1rem;
   outline: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border 0.2s;
 
   &:focus {
-    border-color: #5a0fd6;
-    box-shadow: 0 0 0 2px rgba(90, 15, 214, 0.2);
+    border-color: #fff;
   }
 
   option {
-    background: #18181F;
+    background: #18181f;
     color: #fff;
   }
 `;
 
 const FilterButton = styled.button`
-  background: linear-gradient(135deg, #5a0fd6 0%, #7c3aed 100%);
+  background: #23232b;
   color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 12px 20px;
+  border: 1px solid #23232b;
+  border-radius: 10px;
+  padding: 10px 18px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(90, 15, 214, 0.2);
+  transition: background 0.2s, border 0.2s;
+  box-shadow: none;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(90, 15, 214, 0.3);
+    background: #18181f;
+    border-color: #fff;
   }
 `;
 
 const ActiveFilters = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: #101014;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid #23232b;
+  padding: 10px 16px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  box-shadow: none;
 `;
 
 const FilterTag = styled.div`
-  background: linear-gradient(135deg, #5a0fd6 0%, #7c3aed 100%);
+  background: #23232b;
   color: #fff;
-  border-radius: 12px;
-  padding: 8px 16px;
+  border-radius: 10px;
+  padding: 7px 14px;
   font-size: 0.95rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(90, 15, 214, 0.2);
+  box-shadow: none;
 `;
 
 const ClearButton = styled.button`
-  background: rgba(35, 35, 43, 0.8);
+  background: #18181f;
   color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 8px 16px;
+  border: 1px solid #23232b;
+  border-radius: 10px;
+  padding: 7px 14px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   margin-left: auto;
-  transition: all 0.3s ease;
+  transition: background 0.2s, border 0.2s;
 
   &:hover {
-    background: #5a0fd6;
-    transform: translateY(-2px);
+    background: #23232b;
+    border-color: #fff;
   }
 `;
 
 const TableCard = styled.div`
   background: #101014;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 1px solid rgba(90, 15, 214, 0.3);
-  box-shadow: 0 4px 12px rgba(90, 15, 214, 0.1);
+  border-radius: 14px;
+  border: 1px solid #23232b;
+  box-shadow: none;
   padding: 0;
   margin-top: 0;
   overflow-x: auto;
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 8px 24px rgba(90, 15, 214, 0.15);
-  }
+  transition: border 0.2s;
 `;
 
 const TableTitle = styled.div`
-  color: #ede6fa;
-  font-size: 1.25rem;
-  font-weight: 900;
-  padding: 24px 24px 0 24px;
-  background: linear-gradient(90deg, #fff 0%, #b3b3c6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 800;
+  padding: 20px 20px 0 20px;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
 `;
 
 const StyledTable = styled.table`
@@ -352,7 +326,7 @@ const Tr = styled.tr`
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(90, 15, 214, 0.05);
+    background: #18181f;
     ${Td} {
       color: #fff;
     }
@@ -360,73 +334,54 @@ const Tr = styled.tr`
 `;
 
 const StatusBadge = styled.span`
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: ${props => {
-    switch (props.status) {
-      case 'Pago':
-        return 'rgba(0, 255, 178, 0.1)';
-      case 'Pendente':
-        return 'rgba(255, 184, 0, 0.1)';
-      case 'Atrasado':
-        return 'rgba(255, 95, 95, 0.1)';
-      default:
-        return 'rgba(90, 15, 214, 0.1)';
-    }
-  }};
-  color: ${props => {
-    switch (props.status) {
-      case 'Pago':
-        return '#00FFB2';
-      case 'Pendente':
-        return '#FFB800';
-      case 'Atrasado':
-        return '#FF5F5F';
-      default:
-        return '#5a0fd6';
-    }
-  }};
+  background: #23232b;
+  color: #b3b3c6;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 4px 14px;
+  box-shadow: none;
+  border: none;
 `;
 
 const Pagination = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 16px 24px;
+  padding: 14px 20px;
   color: #b3b3c6;
   font-size: 0.98rem;
-  gap: 12px;
+  gap: 10px;
 `;
 
 const PageButton = styled.button`
-  background: ${props => props.active ? 'linear-gradient(135deg, #5a0fd6 0%, #7c3aed 100%)' : 'rgba(24, 24, 31, 0.8)'};
+  background: ${props => props.active ? '#23232b' : '#18181f'};
   color: #fff;
-  border: 1px solid ${props => props.active ? 'transparent' : 'rgba(90, 15, 214, 0.3)'};
-  border-radius: 8px;
-  padding: 8px 12px;
+  border: 1px solid #23232b;
+  border-radius: 7px;
+  padding: 7px 11px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.2s, border 0.2s;
   display: flex;
   align-items: center;
   gap: 6px;
+  box-shadow: none;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(90, 15, 214, 0.2);
+    background: #23232b;
+    border-color: #fff;
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+    background: #18181f;
+    border-color: #23232b;
   }
 `;
 
@@ -481,16 +436,14 @@ export default function Pagamentos() {
           <HeaderIcon>
             <FiDollarSign />
           </HeaderIcon>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <Title>Pagamentos</Title>
             <SubTitle>Gerencie e acompanhe todos os pagamentos</SubTitle>
-          </div>
         </Header>
 
         <CardsGrid>
           <Card>
             <CardInfo>
-              <CardTitle>Total Recebido</CardTitle>
+              <CardTitle><FiDollarSign style={{marginRight: 8}} />Total Recebido</CardTitle>
               <CardValue>R$ 24.500</CardValue>
               <CardSub>
                 <FiTrendingUp /> +12% este mês
@@ -500,10 +453,9 @@ export default function Pagamentos() {
               <FiDollarSign />
             </CardIcon>
           </Card>
-
           <Card>
             <CardInfo>
-              <CardTitle>Pagamentos Pendentes</CardTitle>
+              <CardTitle><FiClock style={{marginRight: 8}} />Pagamentos Pendentes</CardTitle>
               <CardValue>R$ 8.200</CardValue>
               <CardSub>
                 <FiClock /> 5 pagamentos
@@ -513,23 +465,21 @@ export default function Pagamentos() {
               <FiClock />
             </CardIcon>
           </Card>
-
           <Card>
             <CardInfo>
-              <CardTitle>Taxa de Conversão</CardTitle>
+              <CardTitle><FiTrendingUp style={{marginRight: 8}} />Taxa de Conversão</CardTitle>
               <CardValue>3.2%</CardValue>
               <CardSub>
                 <FiTrendingUp /> +0.8% este mês
               </CardSub>
             </CardInfo>
             <CardIcon>
-              <FiPercent />
+              <FiTrendingUp />
             </CardIcon>
           </Card>
-
           <Card>
             <CardInfo>
-              <CardTitle>Pagamentos Realizados</CardTitle>
+              <CardTitle><FiCheckCircle style={{marginRight: 8}} />Pagamentos Realizados</CardTitle>
               <CardValue>156</CardValue>
               <CardSub>
                 <FiCheckCircle /> +5% este mês
@@ -590,9 +540,7 @@ export default function Pagamentos() {
                 <Td>R$ 1.200,00</Td>
                 <Td>15/03/2024</Td>
                 <Td>
-                  <StatusBadge status="Pago">
-                    <FiCheckCircle /> Pago
-                  </StatusBadge>
+                  <StatusBadge>Pago</StatusBadge>
                 </Td>
               </Tr>
               <Tr>
@@ -601,9 +549,7 @@ export default function Pagamentos() {
                 <Td>R$ 850,00</Td>
                 <Td>14/03/2024</Td>
                 <Td>
-                  <StatusBadge status="Pendente">
-                    <FiClock /> Pendente
-                  </StatusBadge>
+                  <StatusBadge>Pendente</StatusBadge>
                 </Td>
               </Tr>
               <Tr>
@@ -612,9 +558,7 @@ export default function Pagamentos() {
                 <Td>R$ 2.500,00</Td>
                 <Td>13/03/2024</Td>
                 <Td>
-                  <StatusBadge status="Atrasado">
-                    <FiClock /> Atrasado
-                  </StatusBadge>
+                  <StatusBadge>Atrasado</StatusBadge>
                 </Td>
               </Tr>
             </tbody>

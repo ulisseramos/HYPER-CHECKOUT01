@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar';
 import styled, { useTheme } from 'styled-components';
 import { FiUser, FiLock, FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit2, FiEye, FiEyeOff, FiBell, FiCamera, FiBellOff, FiShield, FiArrowLeft } from 'react-icons/fi';
 import { useRouter } from 'next/router';
+import { supabase } from '../lib/supabaseClient';
 
 const PageContainer = styled.div`
   display: flex;
@@ -96,16 +97,25 @@ const TabButton = styled.button`
 `;
 
 const Card = styled.div`
-  background: #18181f;
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  box-shadow: 0 4px 18px 0 #0005;
-  border: 1.5px solid ${({ theme }) => theme.colors.cardBorder};
-  padding: 48px 48px 40px 48px;
-  max-width: 820px;
+  background: #131316;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 #0007;
+  border: 1.5px solid #23232b;
+  padding: 56px 48px 44px 48px;
+  max-width: 1040px;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0;
+  align-items: center;
+  margin: 0 auto;
+  @media (max-width: 1200px) {
+    max-width: 98vw;
+    padding: 28px 4vw 28px 4vw;
+  }
+  @media (max-width: 600px) {
+    padding: 12px 2vw 12px 2vw;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -150,38 +160,40 @@ const Divider = styled.hr`
 `;
 
 const EditButton = styled.button`
-  background: #23232B;
-  color: ${({ theme }) => theme.colors.text};
-  border: 1.5px solid ${({ theme }) => theme.colors.cardBorder};
-  border-radius: ${({ theme }) => theme.borderRadius.button};
+  background: #18181f;
+  color: #ede6fa;
+  border: 1.5px solid #23232b;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
-  padding: 10px 22px;
+  padding: 12px 28px;
   margin-top: 18px;
   align-self: flex-end;
   cursor: pointer;
   transition: background 0.18s, color 0.18s, border 0.18s;
   &:hover {
-    background: #18181F;
-    color: ${({ theme }) => theme.colors.primary};
-    border-color: ${({ theme }) => theme.colors.primary};
+    background: #23232b;
+    color: #ede6fa;
+    border-color: #ede6fa;
   }
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 12px 14px;
-  background: ${({ theme }) => theme.colors.inputBg};
-  border: 1.5px solid ${({ theme }) => theme.colors.inputBorder};
-  border-radius: ${({ theme }) => theme.borderRadius.input};
-  color: ${({ theme }) => theme.colors.inputText};
-  font-size: 1rem;
+  padding: 13px 16px;
+  background: #18181f;
+  border: 1.5px solid #23232b;
+  border-radius: 10px;
+  color: #ede6fa;
+  font-size: 1.07rem;
   margin-top: 4px;
   margin-bottom: 0;
   outline: none;
-  transition: border 0.2s;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 500;
+  transition: border 0.18s, box-shadow 0.18s, background 0.18s;
   &:focus {
-    border-color: ${({ theme }) => theme.colors.inputBorderFocus};
+    border-color: #b3b3c6;
   }
 `;
 
@@ -197,21 +209,22 @@ const Feedback = styled.div`
 `;
 
 const AvatarBig = styled.div`
-  width: 110px;
-  height: 110px;
+  width: 132px;
+  height: 132px;
   border-radius: 50%;
-  background: #23232B;
+  background: #18181f;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.6rem;
+  font-size: 2.8rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
+  color: #ede6fa;
   margin-bottom: 10px;
-  border: 2px solid ${({ theme }) => theme.colors.cardBorder};
-  box-shadow: none;
+  border: 2.5px solid #23232b;
+  box-shadow: 0 2px 12px #0005;
   position: relative;
   overflow: hidden;
+  transition: box-shadow 0.18s, border 0.18s;
 `;
 
 const AvatarImg = styled.img`
@@ -223,22 +236,27 @@ const AvatarImg = styled.img`
 
 const CameraButton = styled.button`
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  background: #18181F;
-  border: 1.5px solid ${({ theme }) => theme.colors.cardBorder};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  bottom: 8px;
+  right: 8px;
+  background: #18181fcc;
+  border: 2px solid #23232b;
+  color: #b3b3c6;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 2px 8px #0003;
+  font-size: 1.3rem;
+  z-index: 2;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
   &:hover {
-    background: ${({ theme }) => theme.colors.primary + '22'};
-    color: ${({ theme }) => theme.colors.primary};
+    background: #23232b;
+    color: #ede6fa;
+    border-color: #ede6fa;
+    box-shadow: 0 4px 14px #0006;
   }
 `;
 
@@ -308,14 +326,22 @@ const NotifActionButton = styled.button`
 `;
 
 const SecurityCard = styled(Card)`
-  background: #18181f;
-  box-shadow: 0 4px 18px 0 #0005;
-  border: 1.5px solid ${({ theme }) => theme.colors.cardBorder};
-  padding: 48px 48px 40px 48px;
-  max-width: 820px;
+  background: #131316;
+  box-shadow: 0 4px 24px 0 #0007;
+  border: 1.5px solid #23232b;
+  padding: 56px 48px 44px 48px;
+  max-width: 1040px;
   margin: 0 auto;
-  border-radius: ${({ theme }) => theme.borderRadius.card};
+  border-radius: 18px;
   position: relative;
+  align-items: center;
+  @media (max-width: 1200px) {
+    max-width: 98vw;
+    padding: 28px 4vw 28px 4vw;
+  }
+  @media (max-width: 600px) {
+    padding: 12px 2vw 12px 2vw;
+  }
 `;
 
 const SecurityHeader = styled.div`
@@ -328,14 +354,14 @@ const SecurityHeader = styled.div`
 `;
 
 const SecurityAvatar = styled(AvatarBig)`
-  width: 110px !important;
-  height: 110px !important;
-  font-size: 2.6rem !important;
-  border: 2.5px solid ${({ theme }) => theme.colors.cardBorder};
-  box-shadow: none;
+  width: 132px !important;
+  height: 132px !important;
+  font-size: 2.8rem !important;
+  border: 2.5px solid #23232b;
+  box-shadow: 0 2px 12px #0005;
   position: static;
   margin-bottom: 18px !important;
-  background: #23232B;
+  background: #18181f;
 `;
 
 const SecurityTitleRow = styled.div`
@@ -389,11 +415,11 @@ const SecurityLabel = styled.label`
 const SecurityInput = styled(Input)`
   border-width: 1.5px;
   text-align: left;
-  background: #23232B;
-  color: ${({ theme }) => theme.colors.text};
+  background: #18181f;
+  color: #ede6fa;
   &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 1.5px ${({ theme }) => theme.colors.primary + '22'};
+    border-color: #b3b3c6;
+    box-shadow: 0 0 0 1.5px #b3b3c622;
   }
 `;
 
@@ -402,15 +428,15 @@ const SecurityButton = styled(EditButton)`
   margin-top: 12px;
   font-size: 1.05rem;
   font-weight: 700;
-  background: #23232B;
+  background: #18181f;
   color: #ede6fa;
-  border: 1.5px solid #23232B;
+  border: 1.5px solid #23232b;
   box-shadow: none;
   transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
   &:hover {
-    background: #18181F;
-    color: #b3b3c6;
-    border-color: #b3b3c6;
+    background: #23232b;
+    color: #ede6fa;
+    border-color: #ede6fa;
     transform: translateY(-1px) scale(1.01);
   }
 `;
@@ -419,35 +445,39 @@ export default function Configuracoes() {
   const theme = useTheme();
   const router = useRouter();
   const [tab, setTab] = useState('perfil');
-  // Simulação de dados do usuário
-  const [user, setUser] = useState({
-    nome: 'Seu Nome',
-    email: 'seu@email.com',
-    telefone: '(99) 99999-9999',
-    endereco: 'Rua Exemplo, 123',
-    nascimento: '1990-01-01',
-    status: 'Ativa',
-    cadastro: '2022-01-15',
-    genero: 'Masculino',
-    avatar: '',
-    notificacoes: true,
-  });
+  // Buscar dados reais do usuário autenticado
+  const [user, setUser] = useState({ nome: '', email: '', cadastro: '', status: 'Ativa', avatar: '' });
   const [editando, setEditando] = useState(false);
-  const [nome, setNome] = useState(user.nome);
-  const [email, setEmail] = useState(user.email);
-  const [telefone, setTelefone] = useState(user.telefone);
-  const [endereco, setEndereco] = useState(user.endereco);
-  const [nascimento, setNascimento] = useState(user.nascimento);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [endereco, setEndereco] = useState('');
+  const [nascimento, setNascimento] = useState('');
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [senha, setSenha] = useState('');
   const [senha2, setSenha2] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [showPass2, setShowPass2] = useState(false);
-  const [notificacoes, setNotificacoes] = useState(user.notificacoes);
-  const [avatar, setAvatar] = useState(user.avatar);
-  const [avatarPreview, setAvatarPreview] = useState(user.avatar);
-  const fileInputRef = useRef();
+  const [notificacoes, setNotificacoes] = useState(true);
+
+  React.useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      let nome = user?.user_metadata?.name;
+      if (!nome) nome = user?.email?.split('@')[0] || 'Usuário';
+      setUser({
+        nome,
+        email: user?.email || '',
+        cadastro: user?.created_at ? user.created_at.split('T')[0] : '',
+        status: 'Ativa',
+        avatar: '',
+      });
+      setNome(nome);
+      setEmail(user?.email || '');
+    }
+    fetchUser();
+  }, []);
 
   const handleSalvar = (e) => {
     e.preventDefault();
@@ -473,18 +503,6 @@ export default function Configuracoes() {
     }, 1000);
   };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    setAvatar(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setAvatarPreview(reader.result);
-      reader.readAsDataURL(file);
-    } else {
-      setAvatarPreview(user.avatar);
-    }
-  };
-
   return (
     <PageContainer>
       <Sidebar />
@@ -503,15 +521,7 @@ export default function Configuracoes() {
             <div style={{ color: theme.colors.textSecondary, marginBottom: 24, fontSize: 18 }}>Gerencie suas informações pessoais e de conta</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginBottom: 32 }}>
               <AvatarBig>
-                {avatarPreview ? (
-                  <AvatarImg src={avatarPreview} alt="Avatar" />
-                ) : (
-                  user.nome.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()
-                )}
-                <CameraButton type="button" onClick={() => fileInputRef.current.click()} title="Trocar foto">
-                  <FiCamera size={18} />
-                </CameraButton>
-                <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
+                {user.nome.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()}
               </AvatarBig>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 26, fontWeight: 800, color: theme.colors.text, marginBottom: 2 }}>{user.nome}</div>
@@ -553,11 +563,7 @@ export default function Configuracoes() {
           <SecurityCard>
             <SecurityHeader>
               <SecurityAvatar>
-                {avatarPreview ? (
-                  <AvatarImg src={avatarPreview} alt="Avatar" />
-                ) : (
-                  user.nome.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()
-                )}
+                {user.nome.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()}
               </SecurityAvatar>
               <SecurityTitleRow>
                 <SecurityIcon><FiShield size={22} /></SecurityIcon>

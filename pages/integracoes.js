@@ -7,6 +7,87 @@ import Modal from 'react-modal';
 import { useSidebar } from '../components/SidebarContext';
 import styled from 'styled-components';
 
+// Styled components para modal (copiado de produtos.js)
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(76,12,122,0.13);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+const ModalForm = styled.form`
+  max-width: 440px;
+  min-width: 0;
+  background: #101014;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px #0004;
+  border: 1.5px solid #a084ff22;
+  padding: 36px;
+  color: #fff;
+  font-family: 'Poppins', 'Inter', Arial, sans-serif;
+  @media (max-width: 600px) {
+    max-width: 98vw;
+    padding: 16px 4px;
+  }
+`;
+const ModalTitle = styled.h2`
+  color: #fff;
+  margin-bottom: 22px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.1px;
+  text-align: left;
+`;
+const ModalLabel = styled.label`
+  font-weight: 600;
+  color: #b3b3c6;
+  font-size: 1.04rem;
+  margin-bottom: 2px;
+  text-align: left;
+`;
+const ModalInput = styled.input`
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  background: #18181f;
+  border: 1.2px solid #23232b;
+  color: #fff;
+  border-radius: 10px;
+  padding: 13px 15px;
+  font-size: 1.04rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  &:focus {
+    border: 1.2px solid #a084ff;
+    box-shadow: 0 0 0 1.5px #a084ff22;
+  }
+`;
+const ModalSelect = styled.select`
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  background: #18181f;
+  border: 1.2px solid #23232b;
+  color: #fff;
+  border-radius: 10px;
+  padding: 13px 15px;
+  font-size: 1.04rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  &:focus {
+    border: 1.2px solid #a084ff;
+    box-shadow: 0 0 0 1.5px #a084ff22;
+  }
+`;
+const ModalActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+`;
+
 const Container = styled.div`
   min-height: 100vh;
   background: #0b0b0e;
@@ -34,76 +115,115 @@ const Main = styled.main`
 const Header = styled.div`
   display: flex;
   align-items: center;
-  gap: 28px;
-  margin-bottom: 36px;
-  background: #23232b;
-  border-radius: 22px;
-  box-shadow: 0 4px 32px #2d1a4d33, 0 1.5px 8px #0006 inset;
-  padding: 32px 38px 32px 32px;
+  gap: 18px;
+  margin-bottom: 24px;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 `;
 const HeaderIcon = styled.div`
-  background: linear-gradient(135deg, #7c3aed 0%, #a084ff 100%);
+  background: #18181f;
   color: #fff;
-  border-radius: 18px;
-  width: 72px;
-  height: 72px;
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.7rem;
-  box-shadow: 0 8px 32px #2d1a4d33, 0 1.5px 8px #0006 inset;
+  font-size: 1.7rem;
+  box-shadow: none;
 `;
 const Title = styled.h1`
-  font-size: 2.7rem;
+  font-size: 2rem;
   font-weight: 900;
   margin: 0;
-  background: linear-gradient(90deg, #a084ff 0%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-  letter-spacing: -1.2px;
-  text-shadow: 0 2px 18px #2d1a4d33;
+  color: #fff;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  letter-spacing: -1px;
 `;
 const SubTitle = styled.div`
   color: #b3b3c6;
-  font-size: 1.18rem;
-  font-weight: 600;
-  margin-top: 8px;
+  font-size: 1.08rem;
+  font-weight: 400;
+  margin: 0 0 0 8px;
 `;
 const CardsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 36px;
-  margin-bottom: 48px;
-  max-width: 1200px;
+  grid-template-columns: ${({ visualizacao }) => visualizacao === 'list' ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))'};
+  gap: 32px;
+  margin-bottom: 28px;
+  max-width: ${({ visualizacao }) => visualizacao === 'list' ? '700px' : '1200px'};
   width: 100%;
-  align-items: stretch;
-  justify-items: center;
-  justify-content: center;
+  padding: 0 24px;
+  @media (max-width: 700px) {
+    padding: 0 8px;
+    max-width: 400px;
+  }
 `;
 const IntegrationCard = styled.div`
-  min-width: 280px;
-  min-height: 140px;
-  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
-  max-width: 370px;
+  align-items: center;
   background: #101014;
-  border: 1.5px solid #2d1a4d;
-  border-radius: 22px;
-  box-shadow: 0 8px 32px 0 #2d1a4d22, 0 1.5px 8px #0006 inset;
-  padding: 32px 28px 28px 28px;
-  transition: box-shadow 0.22s, transform 0.18s cubic-bezier(0.4,0.2,0.2,1);
+  border-radius: 18px;
+  border: none;
+  box-shadow: none;
+  padding: 20px 28px;
+  min-height: 56px;
+  gap: 16px;
   position: relative;
   overflow: hidden;
+  transition: background 0.18s, transform 0.14s cubic-bezier(0.4,0.2,0.2,1);
+  max-width: 320px;
+  width: 100%;
+  margin-bottom: 0;
   &:hover {
-    box-shadow: 0 12px 36px #7c3aed44, 0 2px 12px #2d1a4d55 inset;
-    border: 1.5px solid #a084ff;
-    transform: scale(1.025) translateY(-2px);
+    background: #18181f;
+    transform: scale(1.01) translateY(-2px);
   }
+`;
+const IntegrationIconCircle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-right: 14px;
+  background: #18181f;
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border: none;
+`;
+const IntegrationInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+`;
+const IntegrationName = styled.div`
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+`;
+const IntegrationDesc = styled.div`
+  color: #b3b3c6;
+  font-size: 0.92rem;
+`;
+const Badge = styled.span`
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  background: #23232b;
+  color: #ede6fa;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 4px 14px;
+  z-index: 2;
+  box-shadow: none;
+  letter-spacing: 0.2px;
 `;
 const OverviewCard = styled.div`
   background: #101014;
@@ -133,65 +253,104 @@ const OverviewItem = styled.div`
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   background: #101014;
   border-radius: 14px;
-  padding: 12px 20px;
-  margin-bottom: 32px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
   max-width: 1100px;
   width: 100%;
+  box-shadow: none;
+  border: 1px solid #23232b;
 `;
 const SearchInput = styled.input`
   background: #18181f;
-  border: 1.5px solid #2d1a4d;
+  border: 1px solid #23232b;
   color: #fff;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   font-size: 1rem;
   outline: none;
   width: 100%;
   max-width: 340px;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition: border 0.2s;
   &:focus {
-    border: 1.5px solid #a084ff;
-    box-shadow: 0 0 0 2px #a084ff33;
+    border: 1px solid #fff;
   }
-`;
-const Badge = styled.span`
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  background: #7c3aed;
-  color: #ede6fa;
-  font-size: 0.92rem;
-  font-weight: 800;
-  border-radius: 10px;
-  padding: 6px 18px;
-  z-index: 2;
-  box-shadow: 0 2px 12px #2d1a4d22;
-  letter-spacing: 0.5px;
 `;
 const ConfigureButton = styled.button`
   width: 100%;
-  margin-top: 18px;
-  background: #a084ff;
-  border: none;
-  color: #18181f;
-  border-radius: 12px;
-  padding: 14px 0;
-  font-size: 1.13rem;
-  font-weight: 800;
+  margin-top: 14px;
+  background: #23232b;
+  border: 1px solid #23232b;
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 12px #2d1a4d22;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: none;
+  transition: background 0.18s, border 0.18s;
   &:hover {
-    background: #7c3aed;
-    color: #ede6fa;
-    box-shadow: 0 4px 18px #2d1a4d33;
+    background: #18181f;
+    border-color: #fff;
+    color: #fff;
+  }
+`;
+// Toggle customizado
+const ToggleDisponiveis = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+  input[type='checkbox'] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #a084ff;
+    border-radius: 5px;
+    background: #18181f;
+    display: grid;
+    place-content: center;
+    margin: 0;
+    transition: border 0.18s, background 0.18s;
+  }
+  input[type='checkbox']:checked {
+    background: #a084ff;
+    border-color: #a084ff;
+  }
+  input[type='checkbox']:checked::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: #fff;
+  }
+`;
+const ViewButton = styled.button`
+  background: ${({ active }) => active ? '#a084ff' : 'transparent'};
+  border: none;
+  border-radius: 12px;
+  padding: 7px 13px;
+  color: #fff;
+  opacity: ${({ active }) => active ? 1 : 0.7};
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.18s, opacity 0.18s;
+  &:hover {
+    background: ${({ active }) => active ? '#a084ff' : '#23232b'};
+    opacity: 1;
   }
 `;
 
@@ -212,6 +371,16 @@ export default function Integracoes() {
   const ativas = 0;
   const disponiveis = 8;
   const emBreve = 7;
+  const [showWebhookModal, setShowWebhookModal] = useState(false);
+  const [webhooks, setWebhooks] = useState([]);
+  const [newWebhook, setNewWebhook] = useState({ name: '', url: '', method: 'POST', headers: '', body: '' });
+  const [creatingWebhook, setCreatingWebhook] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Adiciona o estado para saber se está no client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Carregar integrações do usuário ao abrir a página
   useEffect(() => {
@@ -278,77 +447,120 @@ export default function Integracoes() {
     setLoading(false);
   };
 
+  // Função para buscar webhooks do usuário
+  useEffect(() => {
+    async function fetchWebhooks() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const userId = session.user.id;
+      const { data } = await supabase.from('webhooks').select('*').eq('user_id', userId);
+      setWebhooks(data || []);
+    }
+    fetchWebhooks();
+  }, []);
+
+  // Função para criar webhook
+  const handleCreateWebhook = async (e) => {
+    e.preventDefault();
+    setCreatingWebhook(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const userId = session.user.id;
+    const { data, error } = await supabase.from('webhooks').insert({
+      user_id: userId,
+      name: newWebhook.name,
+      url: newWebhook.url,
+      method: newWebhook.method,
+      headers: newWebhook.headers,
+      body: newWebhook.body,
+    }).select().single();
+    if (!error) setWebhooks([...webhooks, data]);
+    setShowWebhookModal(false);
+    setNewWebhook({ name: '', url: '', method: 'POST', headers: '', body: '' });
+    setCreatingWebhook(false);
+  };
+
   return (
     <Container>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
       <Main marginLeft={sidebarWidth}>
         <div style={{ marginTop: 32 }} />
         <Header>
-          <HeaderIcon>
-            <FiZap />
-          </HeaderIcon>
-          <div>
             <Title>Integrações</Title>
-            <SubTitle>Gerencie e conecte suas integrações</SubTitle>
-          </div>
         </Header>
-        <OverviewCard>
-          <OverviewItem>{ativas} <span>Ativas</span></OverviewItem>
-          <OverviewItem>{disponiveis} <span>Disponíveis</span></OverviewItem>
-          <OverviewItem style={{ color: '#b3b3c6' }}>{emBreve} <span>Em breve</span></OverviewItem>
-        </OverviewCard>
-        <SearchBar>
-          <FiSearch style={{ color: '#a084ff', fontSize: 20 }} />
+        {/* Barra de busca, toggle e visualização */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 1200, marginBottom: 24 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <SearchBar style={{ marginBottom: 0, flex: 1, maxWidth: 420 }}>
+              <FiSearch style={{ color: '#b3b3c6', fontSize: 18 }} />
           <SearchInput placeholder="Buscar integrações..." value={busca} onChange={e => setBusca(e.target.value)} />
         </SearchBar>
-        <CardsGrid>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginLeft: 18 }}>
+            <ToggleDisponiveis>
+              <input type="checkbox" checked={soDisponiveis} onChange={e => setSoDisponiveis(e.target.checked)} />
+              Disponíveis
+            </ToggleDisponiveis>
+            <ViewButton active={visualizacao === 'grid'} onClick={() => setVisualizacao('grid')}><FiGrid /></ViewButton>
+            <ViewButton active={visualizacao === 'list'} onClick={() => setVisualizacao('list')}><FiList /></ViewButton>
+          </div>
+        </div>
+        {/* OVERVIEW CARD */}
+        <div style={{ width: '100%', maxWidth: 1200, marginBottom: 32 }}>
+          <div style={{ border: '1.2px solid #a084ff22', borderRadius: 14, background: '#101014', padding: '18px 28px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <span style={{ color: '#b3b3c6', fontWeight: 600, fontSize: 15, marginBottom: 8 }}>Visão Geral</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+              <span style={{ color: '#fff', fontWeight: 900, fontSize: 22 }}>0 <span style={{ color: '#b3b3c6', fontWeight: 600, fontSize: 16 }}>Ativas</span></span>
+              <span style={{ color: '#fff', fontWeight: 900, fontSize: 22 }}>8 <span style={{ color: '#b3b3c6', fontWeight: 600, fontSize: 16 }}>Disponíveis</span></span>
+              <span style={{ color: '#fff', fontWeight: 900, fontSize: 22 }}>7 <span style={{ color: '#b3b3c6', fontWeight: 600, fontSize: 16 }}>Em breve</span></span>
+            </div>
+          </div>
+        </div>
+        <CardsGrid visualizacao={visualizacao}>
           {/* Pushin Pay */}
-          <IntegrationCard>
+          <IntegrationCard onClick={() => setModalOpen('pushin_pay')}>
+            <IntegrationIconCircle><FiZap size={32} color="#fff" /></IntegrationIconCircle>
+            <IntegrationInfo>
+              <IntegrationName>Pushin Pay</IntegrationName>
+              <IntegrationDesc>Importe produtos automaticamente</IntegrationDesc>
+            </IntegrationInfo>
             <Badge>Disponível</Badge>
-            <div style={{ background: 'transparent', borderRadius: 8, padding: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiZap size={32} color="#a084ff" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 800, fontSize: 19, color: '#ede6fa' }}>Pushin Pay</div>
-              <div style={{ color: '#b3b3c6', fontSize: 15 }}>Importe produtos automaticamente</div>
-            </div>
-            <ConfigureButton onClick={() => setModalOpen('pushin_pay')}><span style={{ fontSize: 20, marginRight: 6 }}>+</span> Configurar</ConfigureButton>
           </IntegrationCard>
           {/* Mercado Pago */}
           <IntegrationCard>
-            <Badge>Disponível</Badge>
-            <div style={{ background: 'transparent', borderRadius: 8, padding: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiCreditCard size={32} color="#a084ff" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 800, fontSize: 19, color: '#ede6fa' }}>Mercado Pago</div>
-              <div style={{ color: '#b3b3c6', fontSize: 15 }}>Receba pagamentos via Mercado Pago</div>
-            </div>
-            <ConfigureButton onClick={() => setModalOpen('mercado_pago')}><span style={{ fontSize: 20, marginRight: 6 }}>+</span> Configurar</ConfigureButton>
+            <IntegrationIconCircle><FiCreditCard size={32} color="#fff" /></IntegrationIconCircle>
+            <IntegrationInfo>
+              <IntegrationName>Mercado Pago</IntegrationName>
+              <IntegrationDesc>Receba pagamentos via Mercado Pago</IntegrationDesc>
+            </IntegrationInfo>
+            <Badge style={{ background: '#23232b', color: '#b3b3c6' }}>Em breve</Badge>
           </IntegrationCard>
           {/* Facebook Pixel */}
           <IntegrationCard>
-            <Badge>Disponível</Badge>
-            <div style={{ background: 'transparent', borderRadius: 8, padding: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiFacebook size={32} color="#a084ff" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 800, fontSize: 19, color: '#ede6fa' }}>Facebook Pixel</div>
-              <div style={{ color: '#b3b3c6', fontSize: 15 }}>Rastreie conversões e eventos</div>
-            </div>
-            <ConfigureButton onClick={() => setModalOpen('facebook_pixel')}><span style={{ fontSize: 20, marginRight: 6 }}>+</span> Configurar</ConfigureButton>
+            <IntegrationIconCircle><FiFacebook size={32} color="#fff" /></IntegrationIconCircle>
+            <IntegrationInfo>
+              <IntegrationName>Facebook Pixel</IntegrationName>
+              <IntegrationDesc>Rastreie conversões e eventos</IntegrationDesc>
+            </IntegrationInfo>
+            <Badge style={{ background: '#23232b', color: '#b3b3c6' }}>Em breve</Badge>
           </IntegrationCard>
           {/* UTMFY */}
-          <IntegrationCard>
+          <IntegrationCard onClick={() => setModalOpen('utmfy')}>
+            <IntegrationIconCircle><FiLink2 size={32} color="#fff" /></IntegrationIconCircle>
+            <IntegrationInfo>
+              <IntegrationName>UTMFY</IntegrationName>
+              <IntegrationDesc>UTM tracking avançado</IntegrationDesc>
+            </IntegrationInfo>
             <Badge>Disponível</Badge>
-            <div style={{ background: 'transparent', borderRadius: 8, padding: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiLink2 size={32} color="#a084ff" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 800, fontSize: 19, color: '#ede6fa' }}>UTMFY</div>
-              <div style={{ color: '#b3b3c6', fontSize: 15 }}>UTM tracking avançado</div>
-            </div>
-            <ConfigureButton onClick={() => setModalOpen('utmfy')}><span style={{ fontSize: 20, marginRight: 6 }}>+</span> Configurar</ConfigureButton>
+          </IntegrationCard>
+          {/* Webhook */}
+          <IntegrationCard onClick={() => setShowWebhookModal(true)}>
+            <IntegrationIconCircle><FiLink2 size={32} color="#fff" /></IntegrationIconCircle>
+            <IntegrationInfo>
+              <IntegrationName>Webhook</IntegrationName>
+              <IntegrationDesc>Conecte com qualquer API</IntegrationDesc>
+            </IntegrationInfo>
+            <Badge style={{ background: '#23232b', color: '#b3b3c6' }}>Custom</Badge>
           </IntegrationCard>
         </CardsGrid>
         {/* Modal de integração */}
@@ -426,6 +638,32 @@ export default function Integracoes() {
             </div>
           </form>
         </Modal>
+        {isClient && showWebhookModal && (
+          <ModalOverlay>
+            <ModalForm onSubmit={handleCreateWebhook}>
+              <ModalTitle>Novo Webhook</ModalTitle>
+              <ModalLabel>Nome</ModalLabel>
+              <ModalInput required value={newWebhook.name} onChange={e => setNewWebhook(w => ({ ...w, name: e.target.value }))} />
+              <ModalLabel>URL do endpoint</ModalLabel>
+              <ModalInput required value={newWebhook.url} onChange={e => setNewWebhook(w => ({ ...w, url: e.target.value }))} />
+              <ModalLabel>Método</ModalLabel>
+              <ModalSelect value={newWebhook.method} onChange={e => setNewWebhook(w => ({ ...w, method: e.target.value }))}>
+                <option value="POST">POST</option>
+                <option value="GET">GET</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+              </ModalSelect>
+              <ModalLabel>Headers (JSON, opcional)</ModalLabel>
+              <ModalInput value={newWebhook.headers} onChange={e => setNewWebhook(w => ({ ...w, headers: e.target.value }))} />
+              <ModalLabel>Body (JSON, opcional)</ModalLabel>
+              <ModalInput value={newWebhook.body} onChange={e => setNewWebhook(w => ({ ...w, body: e.target.value }))} />
+              <ModalActions>
+                <ConfigureButton type="submit" disabled={creatingWebhook}>{creatingWebhook ? 'Criando...' : 'Criar Webhook'}</ConfigureButton>
+                <ConfigureButton type="button" style={{ background: '#18181f', color: '#a084ff', border: '1.5px solid #23232b' }} onClick={() => setShowWebhookModal(false)}>Cancelar</ConfigureButton>
+              </ModalActions>
+            </ModalForm>
+          </ModalOverlay>
+        )}
         <style jsx global>{`
           @media (max-width: 900px) {
             main {

@@ -16,5 +16,10 @@ export default function Home() {
     });
   }, [router]);
 
-  return <div>Carregando...</div>;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <img src="https://i.imgur.com/1z5yHIU.png" alt="Logo" style={{ width: 120, marginBottom: 24 }} />
+      <div>Carregando...</div>
+    </div>
+  );
 } 
